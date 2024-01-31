@@ -111,7 +111,7 @@ public class Vertice {
      */
     public boolean conPeso(){
         for (Arista arista: aristas){
-            if (arista.getPeso() != 1){
+            if (arista.getPeso() >= 1){
                 return true;
             }
         }
@@ -184,5 +184,20 @@ public class Vertice {
             "dato=" + dato +
             ",adyacentes="+ this.getAdyacente().stream().map(Vertice::getDato).map(Object::toString).collect(Collectors.joining(", ")) +
             '}';
+    }
+
+    public String getEstado(){
+        int estado = 0;
+        for (Arista arista: aristas){
+            if (arista.getPeso() != 1){
+                estado = 1;
+                break;
+            }
+        }
+        if (estado == 0){
+            return "no ponderado";
+        } else {
+            return "ponderado";
+        }
     }
 }

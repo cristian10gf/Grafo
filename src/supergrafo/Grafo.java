@@ -59,7 +59,7 @@ public class Grafo {
             return 2;
         } else if (modalidad.equalsIgnoreCase("No dirigido")) {
             return 1;
-        } else if (modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("no dirigido  Ponderado ")) {
+        } else if (modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("no dirigido Ponderado")) {
             return 3;
         } else if (modalidad.equalsIgnoreCase("Dirigido Ponderado") || modalidad.equalsIgnoreCase("Ponderado Dirigido")) {
             return 4;
@@ -91,15 +91,15 @@ public class Grafo {
      */
     private void generarRelacacionMatriz(Vertice v1, Vertice v2) {
         if (validarModalidad(modalidad) == 2) {
-            adyacencia[v1.getID()][v2.getID()] = 1;
+            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
         } else if (validarModalidad(modalidad)  == 1) {
-            adyacencia[v1.getID()][v2.getID()] = 1;
-            adyacencia[v2.getID()][v1.getID()] = 1;
+            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
+            adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = 1;
         } else if (validarModalidad(modalidad)  == 3) {
-            adyacencia[v1.getID()][v2.getID()] = v1.getArista(v2).getPeso();
-            adyacencia[v2.getID()][v1.getID()] = v2.getArista(v1).getPeso();
+            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
+            adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = v2.getArista(v1).getPeso();
         } else if (validarModalidad(modalidad)  == 4) {
-            adyacencia[v1.getID()][v2.getID()] = v1.getArista(v2).getPeso();
+            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
         }
     }
 
@@ -316,8 +316,12 @@ public class Grafo {
             //throw new IllegalArgumentException("El vértice ya existe");
         } else if ((validarModalidad(modalidad) == 3 || validarModalidad(modalidad) == 4) && vertice.conPeso() == false){
             throw new IllegalArgumentException("El grafo es ponderado y el vertice no tiene peso");
-        } else if ((validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 4) && vertice.conPeso() == true){
+        } else if ((validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 1) && vertice.conPeso() == true){
             throw new IllegalArgumentException("El grafo no es ponderado y el vertice tiene peso");
+        } else if ( (validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 2) && vertice.getEstado().equalsIgnoreCase("ponderado")){
+            throw new IllegalArgumentException("El grafo no debe ser ponderado y el vertice tiene  aristas con peso diferente de 1");
+        } else if ( (validarModalidad(modalidad) == 4 || validarModalidad(modalidad) == 3) && vertice.getEstado().equalsIgnoreCase("no ponderado")){
+            throw new IllegalArgumentException("El grafo debe ser ponderado y el vertice tiene  aristas con peso igual a 1");
         } else {
             this.vertices.add(vertice);
         }
@@ -397,9 +401,9 @@ public class Grafo {
      * @param v2 el segundo vértice a conectar
      */
     public void conectarVertice(Vertice v1, Vertice v2) {
-        if (validarModalidad(modalidad) == 2) {
+        if (validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 4){
             v1.unirVertices(v2);
-        } else if (validarModalidad(modalidad)  == 1) {
+        } else if (validarModalidad(modalidad)  == 1 || validarModalidad(modalidad) == 3){
             v1.unirVertices(v2);
             v2.unirVertices(v1);
         } 
