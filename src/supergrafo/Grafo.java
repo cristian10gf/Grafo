@@ -33,6 +33,15 @@ public class Grafo {
         this.vertices = new ArrayList<>();
     }
 
+    public Grafo(String modalidad, ArrayList<Vertice> vertices){
+        if (modalidad.equalsIgnoreCase("Dirigido") || modalidad.equalsIgnoreCase("No dirigido") || modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("Dirigido Ponderado")) {
+            this.modalidad = modalidad;
+        } else {
+            throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
+        }
+        this.vertices = vertices
+    }
+
     public Grafo() {
         this.vertices = new ArrayList<>();
         this.modalidad = "No dirigido";
@@ -322,6 +331,8 @@ public class Grafo {
             throw new IllegalArgumentException("El grafo no debe ser ponderado y el vertice tiene  aristas con peso diferente de 1");
         } else if ( (validarModalidad(modalidad) == 4 || validarModalidad(modalidad) == 3) && vertice.getEstado().equalsIgnoreCase("no ponderado")){
             throw new IllegalArgumentException("El grafo debe ser ponderado y el vertice tiene  aristas con peso igual a 1");
+        } else if (vertice.getAristas().size() == 0){
+            this.vertices.add(vertice);
         } else {
             this.vertices.add(vertice);
         }
@@ -489,6 +500,16 @@ public class Grafo {
             throw new IllegalArgumentException("La arista no existe");
         }
         uptade();
+    }
+
+    public void eliminarArista(Arista arista) {
+        for (Vertice v : vertices){
+            if (v.getAristas().contains(arista)){
+                v.eliminarArista(arista)
+                break;
+            }
+        }
+        uptade()
     }
 
 
