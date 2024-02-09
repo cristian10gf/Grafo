@@ -18,6 +18,14 @@ public class Arbol {
         return Math.max(alturaArbol(nodo.izquierdo), alturaArbol(nodo.derecho)) + 1;
     }
 
+    /**
+     * Adds a new node with the given data to the tree.
+     * If the tree is empty, the new node becomes the root.
+     * Otherwise, the new node is added recursively to the appropriate position in the tree.
+     * The new node is also added to the list of nodes in the tree.
+     *
+     * @param dato The data to be added to the tree.
+     */
     public void agregar(int dato) {
         Nodo nodo = new Nodo(dato);
         if (this.raiz == null) {
