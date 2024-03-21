@@ -138,6 +138,15 @@ public class Vertice {
         aristas.add(new Arista(this,destino,1));
         //destino.agregar(this., peso);
     } 
+
+    public void eliminarArista(Vertice destino){
+        for (Arista arista: aristas){
+            if (arista.getDestino().equals(destino)){
+                aristas.remove(arista);
+                break;
+            }
+        }
+    }
     
     /**
      * Devuelve una lista de vértices adyacentes a este vértice.

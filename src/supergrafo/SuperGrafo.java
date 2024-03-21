@@ -1,5 +1,8 @@
 package supergrafo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //import java.util.List;
 
 public class SuperGrafo {
@@ -22,26 +25,10 @@ public class SuperGrafo {
         grafo.conectarVertice(v3, v4, 5);
         grafo.conectarVertice(v3, v5, 8);
         
-        int[] nose= Grafo.bellmanFord(grafo.getAdyacencia(),grafo.getIndiceVertice(v2));
-        
-        
-        
-        System.out.println("Belman Ford");
-        for (int i = 0; i < nose.length; i++){
-            System.out.println(nose[i]);
-        }
-        long [][] matriz = grafo.floydWarshall();
-        for (int i = 0; i < matriz.length; i++){
-            for (int j = 0; j < matriz.length; j++){
-                System.out.print(matriz[i][j] + " ");
-            }
-            System.out.println();
-            System.out.println();
-        }
-        
-        //grafo.imprimir_grafo();
-        var camino = grafo.hayCiclo();
-        System.out.println(camino);
+        List<Integer> nose = grafo.dijkstra(grafo.getIndiceVertice(v2), grafo.getIndiceVertice(v5));
+
+        //grafo.eliminarVertice(v6);
+        grafo.imprimir_grafo();
 
     }
     

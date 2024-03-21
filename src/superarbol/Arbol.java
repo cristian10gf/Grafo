@@ -6,10 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-import javax.swing.tree.TreeNode;
-
-import org.w3c.dom.Node;
-
 //Implementaciones Pendientes:
 // Implementar la funcion de eliminacion de nodos
 // Implementar la funcion de balanceo de arboles
@@ -19,11 +15,21 @@ import org.w3c.dom.Node;
 public class Arbol {
 
     public Nodo raiz;
-    ArrayList<Nodo> listanodos;
+    ArrayList<Nodo> listaNodos;
 
     public Arbol() {
         this.raiz = null;
-        this.listanodos = new ArrayList<Nodo>();
+        this.listaNodos = new ArrayList<Nodo>();
+    }
+
+    public Arbol(Nodo raiz) {
+        this.raiz = raiz;
+        this.listaNodos = new ArrayList<Nodo>();
+    }
+
+    public Arbol(int dato) {
+        this.raiz = new Nodo(dato);
+        this.listaNodos = new ArrayList<Nodo>();
     }
 
     // _____________________________________Funciones para el funcionamiento del
@@ -44,10 +50,10 @@ public class Arbol {
             this.raiz = nodo;
             this.raiz.alturaNodo = 0;
             this.raiz.padre = null;
-            this.listanodos.add(nodo);
+            this.listaNodos.add(nodo);
         } else {
             agregarRecursivo(this.raiz, nodo);
-            this.listanodos.add(nodo);
+            this.listaNodos.add(nodo);
         }
     }
 
@@ -68,7 +74,7 @@ public class Arbol {
                 agregarRecursivo(nodo.izquierdo, nuevoNodo);
                 nodo.alturaNodo = Alturanodo(nodo);
             }
-        } else {
+        } else if (nuevoNodo.dato > nodo.dato) {
             if (nodo.derecho == null) {
                 nodo.derecho = nuevoNodo;
                 nodo.derecho.padre = nodo;
@@ -77,6 +83,8 @@ public class Arbol {
                 agregarRecursivo(nodo.derecho, nuevoNodo);
                 nodo.alturaNodo = Alturanodo(nodo);
             }
+        } else {
+            System.out.println("El nodo ya existe");
         }
     }
 
@@ -167,53 +175,14 @@ public class Arbol {
         return Math.max(Altura(nodo.izquierdo), Altura(nodo.derecho)) + 1;
     }
 
-
-    class QItem {
-
-        Nodo node;
-        int hd;
-    
-        public QItem(Nodo n, int h) {
-            node = n;
-            hd = h;
-        }
-    }
-
-    public void printTopView() {
-        // base case
-        if (this.raiz == null) {
-            return;
-        }
-
-        // Creates an empty hashset
-        HashSet<Integer> set = new HashSet<>();
-
-        // Create a queue and add root to it
-        Queue<QItem> Q = new LinkedList<QItem>();
-        Q.add(new QItem(this.raiz, 0)); // Horizontal distance of root is 0
-
-        // Standard BFS or level order traversal loop
-        while (!Q.isEmpty()) {
-            // Remove the front item and get its details
-            QItem qi = Q.remove();
-            int hd = qi.hd;
-            Nodo n = qi.node;
-
-            // If this is the first node at its horizontal distance,
-            // then this node is in top view
-            if (!set.contains(hd)) {
-                set.add(hd);
-                System.out.print(n.dato + " ");
-            }
-
-            // Enqueue left and right children of current node
-            if (n.izquierdo != null) {
-                Q.add(new QItem(n.izquierdo, hd - 1));
-            }
-            if (n.derecho != null) {
-                Q.add(new QItem(n.derecho, hd + 1));
+    public int AlturaMax() { // funcion para calcular la altura maxima del arbol
+        int max = 0;
+        for (Nodo nodo : this.listaNodos) {
+            if (nodo.alturaNodo > max) {
+                max = nodo.alturaNodo;
             }
         }
+        return max;
     }
 
     // _____________________________________Funciones para el funcionamiento del
@@ -255,7 +224,7 @@ public class Arbol {
         if (nodo == null) {
             System.out.println("Nodo nuevo");
             Nodo nuevo = new Nodo(valor);
-            listanodos.add(nuevo);
+            listaNodos.add(nuevo);
             return nuevo;
 
         }
@@ -266,7 +235,7 @@ public class Arbol {
             System.out.println("Insertar a la izquierda");
             if (nodo.izquierdo == null) {
                 Nodo nuevo = new Nodo(valor);
-                listanodos.add(nuevo);
+                listaNodos.add(nuevo);
                 nodo.izquierdo = nuevo;
                 nuevo.padre = nodo;
                 if (nodo.derecho == null)
@@ -279,7 +248,7 @@ public class Arbol {
             System.out.println("Insertar a la derecha");
             if (nodo.derecho == null) {
                 Nodo nuevo = new Nodo(valor);
-                listanodos.add(nuevo);
+                listaNodos.add(nuevo);
                 nodo.derecho = nuevo;
                 nuevo.padre = nodo;
                 if (nodo.izquierdo == null)
@@ -319,7 +288,7 @@ public class Arbol {
     public Arbol balanceararbol() { // balancea el arbol en base a la altura de los nodos
         Arbol arboltemp = new Arbol();
         ArrayList<Integer> nodosordenados = new ArrayList<Integer>();
-        for (Nodo nodo : this.listanodos) {
+        for (Nodo nodo : this.listaNodos) {
             nodosordenados.add(nodo.dato);
         }
         nodosordenados.sort(null);
@@ -335,23 +304,28 @@ public class Arbol {
     }
 
     public ArrayList<Nodo> listanodos() { // devuelve una lista con todos los nodos del arbol
-        return this.listanodos;
+        return this.listaNodos;
     }
 
     public ArrayList<Nodo> buscarnodo_altura(int altura) { // devuelve una lista con todos los nodos que tienen una
                                                            // altura dada
         ArrayList<Nodo> nodos = new ArrayList<Nodo>();
-        for (Nodo nodo : this.listanodos) {
+        for (Nodo nodo : this.listaNodos) {
             if (nodo.alturaNodo == altura) {
                 nodos.add(nodo);
             }
         }
         return nodos;
     }
-    // _______________________________________________Funciones Extra
-    // No-Esenciales_________________________________________________//
+    
+    
+    
+    
+    
+    
+    // _______________________Funciones Extra No-Esenciales__________________________________//
 
-    public Nodo buscarnodo(Nodo nodo, int valor) { // funcion para buscar un nodo en el arbol en base a su valor
+    public Nodo buscarnodo_recursivo(Nodo nodo, int valor) { // funcion para buscar un nodo en el arbol en base a su valor
         if (nodo == null) {
             return null;
         }
@@ -359,9 +333,12 @@ public class Arbol {
             return nodo;
         }
         if (nodo.dato < valor) {
-            return buscarnodo(nodo.derecho, valor);
+            return buscarnodo_recursivo(nodo.derecho, valor);
         }
-        return buscarnodo(nodo.izquierdo, valor);
+        return buscarnodo_recursivo(nodo.izquierdo, valor);
+    }
+    public Nodo buscarnodo(int valor) { // funcion para buscar un nodo en el arbol en base a su valor
+        return buscarnodo_recursivo(this.raiz, valor);
     }
 
     public void printer_ifwaszzz(Nodo node) { // imprime el arbol de manera bonita; me lo robe de github
@@ -484,6 +461,54 @@ public class Arbol {
         postorden(ñodo.derecho);
         System.out.print(ñodo.dato);
 
+    }
+
+    class QItem {
+
+        Nodo node;
+        int hd;
+
+        public QItem(Nodo n, int h) {
+            node = n;
+            hd = h;
+        }
+    }
+
+    public void printTopView() {
+        // base case
+        if (this.raiz == null) {
+            return;
+        }
+
+        // Creates an empty hashset
+        HashSet<Integer> set = new HashSet<>();
+
+        // Create a queue and add root to it
+        Queue<QItem> Q = new LinkedList<QItem>();
+        Q.add(new QItem(this.raiz, 0)); // Horizontal distance of root is 0
+
+        // Standard BFS or level order traversal loop
+        while (!Q.isEmpty()) {
+            // Remove the front item and get its details
+            QItem qi = Q.remove();
+            int hd = qi.hd;
+            Nodo n = qi.node;
+
+            // If this is the first node at its horizontal distance,
+            // then this node is in top view
+            if (!set.contains(hd)) {
+                set.add(hd);
+                System.out.print(n.dato + " ");
+            }
+
+            // Enqueue left and right children of current node
+            if (n.izquierdo != null) {
+                Q.add(new QItem(n.izquierdo, hd - 1));
+            }
+            if (n.derecho != null) {
+                Q.add(new QItem(n.derecho, hd + 1));
+            }
+        }
     }
 
 }

@@ -17,15 +17,15 @@ public class Grafo {
     private ArrayList<Vertice> vertices; // lista de vertices del grafo
     private int adyacencia[][]; // matriz de adyacencia del grafo
 
-    
     /**
-    * Constructor de la clase Grafo.
-    * 
-    * @param modalidad la modalidad del grafo (dirigido, no dirigido, ponderado)
-    * @throws IllegalArgumentException si la modalidad no es válida
-    */ 
+     * Constructor de la clase Grafo.
+     * 
+     * @param modalidad la modalidad del grafo (dirigido, no dirigido, ponderado)
+     * @throws IllegalArgumentException si la modalidad no es válida
+     */
     public Grafo(String modalidad) {
-        if (modalidad.equalsIgnoreCase("Dirigido") || modalidad.equalsIgnoreCase("No dirigido") || modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("Dirigido Ponderado")) {
+        if (modalidad.equalsIgnoreCase("Dirigido") || modalidad.equalsIgnoreCase("No dirigido")
+                || modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("Dirigido Ponderado")) {
             this.modalidad = modalidad;
         } else {
             throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
@@ -38,18 +38,17 @@ public class Grafo {
         this.modalidad = "No dirigido";
     }
 
-
     // ________________________________________ configuracion de grafo _________________________________________________________________________________
-    
+
     /**
      * Devuelve la modalidad del grafo.
      *
      * @return la modalidad del grafo
      */
     public void setModalidad(String modalidad) {
-        if (validarModalidad(modalidad) != 0){
+        if (validarModalidad(modalidad) != 0) {
             this.modalidad = modalidad;
-        }else{
+        } else {
             throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
         }
     }
@@ -61,7 +60,8 @@ public class Grafo {
             return 1;
         } else if (modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("no dirigido Ponderado")) {
             return 3;
-        } else if (modalidad.equalsIgnoreCase("Dirigido Ponderado") || modalidad.equalsIgnoreCase("Ponderado Dirigido")) {
+        } else if (modalidad.equalsIgnoreCase("Dirigido Ponderado")
+                || modalidad.equalsIgnoreCase("Ponderado Dirigido")) {
             return 4;
         } else {
             return 0;
@@ -70,7 +70,8 @@ public class Grafo {
 
     /**
      * Actualiza la matriz de adyacencia del grafo.
-     * Recorre todos los vértices del grafo y genera las relaciones en la matriz de adyacencia
+     * Recorre todos los vértices del grafo y genera las relaciones en la matriz de
+     * adyacencia
      * a partir de las aristas de cada vértice.
      */
     private void uptade() {
@@ -92,20 +93,19 @@ public class Grafo {
     private void generarRelacacionMatriz(Vertice v1, Vertice v2) {
         if (validarModalidad(modalidad) == 2) {
             adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
-        } else if (validarModalidad(modalidad)  == 1) {
+        } else if (validarModalidad(modalidad) == 1) {
             adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
             adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = 1;
-        } else if (validarModalidad(modalidad)  == 3) {
+        } else if (validarModalidad(modalidad) == 3) {
             adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
             adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = v2.getArista(v1).getPeso();
-        } else if (validarModalidad(modalidad)  == 4) {
+        } else if (validarModalidad(modalidad) == 4) {
             adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
         }
     }
 
+    // _________________________________________geters y seters de grafo _________________________________________________________________________________________________________________________
 
-    //  _________________________________________geters y seters de grafo _________________________________________________________________________________________________________________________
-    
     /**
      * Devuelve una lista de los vértices del grafo.
      *
@@ -113,6 +113,16 @@ public class Grafo {
      */
     public ArrayList<Vertice> getVertices() {
         return vertices;
+    }
+
+    /**
+     * Retorna el vertice de un grafo dado un indice.
+     *
+     * @param i the index of the vertex to retrieve
+     * @return the vertex at the specified index
+     */
+    public Vertice getVertice(int i) {
+        return vertices.get(i);
     }
 
     /**
@@ -149,7 +159,8 @@ public class Grafo {
     }
 
     /**
-     * Imprime el grafo mostrando los vértices y las aristas conectadas a cada vértice.
+     * Imprime el grafo mostrando los vértices y las aristas conectadas a cada
+     * vértice.
      */
     public void imprimir_grafo() {
         this.adyacencia = new int[vertices.size()][vertices.size()];
@@ -162,7 +173,6 @@ public class Grafo {
             System.out.println("");
         }
     }
-
 
     /**
      * Muestra la matriz de adyacencia del grafo.
@@ -177,20 +187,19 @@ public class Grafo {
         }
     }
 
-
     /**
      * Devuelve el índice de un vértice en la lista de vértices del grafo.
      *
      * @param vertice el vértice a buscar
      * @return el índice del vértice en la lista de vértices del grafo
-     */ 
+     */
     public int getIndiceVertice(Vertice vertice) {
         return vertices.indexOf(vertice);
     }
-    
 
     /**
-     * Calcula y devuelve una matriz de recorrido a partir de la matriz de adyacencia del grafo.
+     * Calcula y devuelve una matriz de recorrido a partir de la matriz de
+     * adyacencia del grafo.
      * Si no hay una conexión directa entre dos vértices, se asigna el valor INFI.
      * 
      * @return la matriz de recorrido del grafo
@@ -209,15 +218,14 @@ public class Grafo {
         return matriz;
     }
 
-
-    
     /**
      * Devuelve el grado máximo del grafo.
-     * El grado máximo se refiere al número máximo de aristas que tiene un vértice en el grafo.
+     * El grado máximo se refiere al número máximo de aristas que tiene un vértice
+     * en el grafo.
      *
      * @return El grado máximo del grafo.
      */
-    public int gradoMax(){
+    public int gradoMax() {
         int max = 0;
         for (Vertice vertice : vertices) {
             if (vertice.getAristas().size() > max) {
@@ -229,11 +237,12 @@ public class Grafo {
 
     /**
      * Devuelve el grado mínimo del grafo.
-     * El grado mínimo se refiere al número mínimo de aristas que tiene un vértice en el grafo.
+     * El grado mínimo se refiere al número mínimo de aristas que tiene un vértice
+     * en el grafo.
      *
      * @return el grado mínimo del grafo
      */
-    public int gradoMin(){
+    public int gradoMin() {
         int min = 0;
         for (Vertice vertice : vertices) {
             if (vertice.getAristas().size() < min) {
@@ -243,15 +252,14 @@ public class Grafo {
         return min;
     }
 
-
-
     /**
      * Devuelve una lista de los vértices de mayor grado en el grafo.
-     * El grado de un vértice se refiere al número de aristas que tiene el vértice en el grafo.
+     * El grado de un vértice se refiere al número de aristas que tiene el vértice
+     * en el grafo.
      *
      * @return una lista de los vértices de mayot grado en el grafo
      */
-    public ArrayList<Vertice> getVerticesMayorGrado(){
+    public ArrayList<Vertice> getVerticesMayorGrado() {
         ArrayList<Vertice> verticesMayorGrado = new ArrayList<>();
         int max = 0;
         for (Vertice vertice : vertices) {
@@ -269,11 +277,12 @@ public class Grafo {
 
     /**
      * Devuelve una lista de los vértices de menor grado en el grafo.
-     * El grado de un vértice se refiere al número de aristas que tiene el vértice en el grafo.
+     * El grado de un vértice se refiere al número de aristas que tiene el vértice
+     * en el grafo.
      *
      * @return una lista de los vértices de menor grado en el grafo
      */
-    public ArrayList<Vertice> getVerticesMenorGrado(){
+    public ArrayList<Vertice> getVerticesMenorGrado() {
         ArrayList<Vertice> verticesMenorGrado = new ArrayList<>();
         int min = 0;
         for (Vertice vertice : vertices) {
@@ -289,21 +298,20 @@ public class Grafo {
         return verticesMenorGrado;
     }
 
-
     /**
      * Devuelve el grado de un vértice en el grafo.
-     * El grado de un vértice se refiere al número de aristas que tiene el vértice en el grafo.
+     * El grado de un vértice se refiere al número de aristas que tiene el vértice
+     * en el grafo.
      *
      * @param vertice el vértice a buscar
      * @return el grado del vértice en el grafo
      */
-    public int grado(Vertice vertice){
+    public int grado(Vertice vertice) {
         return vertice.grado();
     }
 
-
-
-    // _________________________________________metodos de grafo _________________________________________________________________________________________________________________________
+    // _________________________________________metodos de grafo
+    // _________________________________________________________________________________________________________________________
 
     /**
      * Agrega un vértice al grafo.
@@ -313,15 +321,21 @@ public class Grafo {
      */
     public void addVertice(Vertice vertice) {
         if (this.vertices.contains(vertice)) {
-            //throw new IllegalArgumentException("El vértice ya existe");
-        } else if ((validarModalidad(modalidad) == 3 || validarModalidad(modalidad) == 4) && vertice.conPeso() == false){
+            // throw new IllegalArgumentException("El vértice ya existe");
+        } else if ((validarModalidad(modalidad) == 3 || validarModalidad(modalidad) == 4)
+                && vertice.conPeso() == false) {
             throw new IllegalArgumentException("El grafo es ponderado y el vertice no tiene peso");
-        } else if ((validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 1) && vertice.conPeso() == true){
+        } else if ((validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 1)
+                && vertice.conPeso() == true) {
             throw new IllegalArgumentException("El grafo no es ponderado y el vertice tiene peso");
-        } else if ( (validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 2) && vertice.getEstado().equalsIgnoreCase("ponderado")){
-            throw new IllegalArgumentException("El grafo no debe ser ponderado y el vertice tiene  aristas con peso diferente de 1");
-        } else if ( (validarModalidad(modalidad) == 4 || validarModalidad(modalidad) == 3) && vertice.getEstado().equalsIgnoreCase("no ponderado")){
-            throw new IllegalArgumentException("El grafo debe ser ponderado y el vertice tiene  aristas con peso igual a 1");
+        } else if ((validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 2)
+                && vertice.getEstado().equalsIgnoreCase("ponderado")) {
+            throw new IllegalArgumentException(
+                    "El grafo no debe ser ponderado y el vertice tiene  aristas con peso diferente de 1");
+        } else if ((validarModalidad(modalidad) == 4 || validarModalidad(modalidad) == 3)
+                && vertice.getEstado().equalsIgnoreCase("no ponderado")) {
+            throw new IllegalArgumentException(
+                    "El grafo debe ser ponderado y el vertice tiene  aristas con peso igual a 1");
         } else {
             this.vertices.add(vertice);
         }
@@ -335,7 +349,8 @@ public class Grafo {
     public void addVertice(ArrayList<Vertice> vertices) {
         for (Vertice vertice : vertices) {
             if (!this.vertices.contains(vertice)) {
-                this.addVertice(vertice);;
+                this.addVertice(vertice);
+                ;
             }
         }
     }
@@ -344,47 +359,48 @@ public class Grafo {
      * Agrega un vértice al grafo.
      * 
      * @param dato el dato del vértice a agregar
-     * funcion aun experimental puede dar comportamientos no esperados
+     *             funcion aun experimental puede dar comportamientos no esperados
      */
     public void addVertice(String dato) {
         Vertice vertice = new Vertice(dato);
         if (this.vertices.contains(vertice)) {
-            //throw new IllegalArgumentException("El vértice ya existe");
+            // throw new IllegalArgumentException("El vértice ya existe");
         } else {
             this.vertices.add(vertice);
         }
     }
 
-
-
     /**
-     * Conecta dos vértices en el grafo con un peso dado, según la modalidad establecida.
+     * Conecta dos vértices en el grafo con un peso dado, según la modalidad
+     * establecida.
      * Si la modalidad es 2, se conecta el vértice v1 con el vértice v2.
      * Si la modalidad es 1, se conecta el vértice v1 con el vértice v2 y viceversa.
-     * Si la modalidad es 3, se conecta el vértice v1 con el vértice v2 y viceversa, con el peso especificado.
-     * Si la modalidad es 4, se conecta el vértice v1 con el vértice v2, con el peso especificado.
+     * Si la modalidad es 3, se conecta el vértice v1 con el vértice v2 y viceversa,
+     * con el peso especificado.
+     * Si la modalidad es 4, se conecta el vértice v1 con el vértice v2, con el peso
+     * especificado.
      * Si alguno de los vértices no está presente en el grafo, se añade al grafo.
      * Finalmente, se actualiza el grafo.
      *
-     * @param v1 El primer vértice a conectar.
-     * @param v2 El segundo vértice a conectar.
+     * @param v1   El primer vértice a conectar.
+     * @param v2   El segundo vértice a conectar.
      * @param peso El peso de la conexión.
      */
     public void conectarVertice(Vertice v1, Vertice v2, int peso) {
         if (validarModalidad(modalidad) == 2) {
             v1.unirVertices(v2);
-        } else if (validarModalidad(modalidad)  == 1) {
+        } else if (validarModalidad(modalidad) == 1) {
             v1.unirVertices(v2);
             v2.unirVertices(v1);
-        } else if (validarModalidad(modalidad)  == 3) {
+        } else if (validarModalidad(modalidad) == 3) {
             v1.unirVertices(v2, peso);
             v2.unirVertices(v1, peso);
-        } else if (validarModalidad(modalidad)  == 4) {
+        } else if (validarModalidad(modalidad) == 4) {
             v1.unirVertices(v2, peso);
         }
         if (!this.vertices.contains(v1)) {
             this.vertices.add(v1);
-        } 
+        }
         if (!this.vertices.contains(v2)) {
             this.vertices.add(v2);
         }
@@ -401,22 +417,20 @@ public class Grafo {
      * @param v2 el segundo vértice a conectar
      */
     public void conectarVertice(Vertice v1, Vertice v2) {
-        if (validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 4){
+        if (validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 4) {
             v1.unirVertices(v2);
-        } else if (validarModalidad(modalidad)  == 1 || validarModalidad(modalidad) == 3){
+        } else if (validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 3) {
             v1.unirVertices(v2);
             v2.unirVertices(v1);
-        } 
+        }
         if (!this.vertices.contains(v1)) {
             this.vertices.add(v1);
-        } 
+        }
         if (!this.vertices.contains(v2)) {
             this.vertices.add(v2);
         }
         uptade();
     }
-
-
 
     /**
      * Elimina un vértice del grafo.
@@ -428,7 +442,7 @@ public class Grafo {
         if (this.vertices.contains(vertice)) {
             this.vertices.remove(vertice);
             for (Vertice v : vertices) {
-                v.getAristas().remove(vertice.getArista(v));
+                v.eliminarArista(vertice);
             }
         } else {
             throw new IllegalArgumentException("El vértice no existe");
@@ -457,7 +471,7 @@ public class Grafo {
      * Elimina un vértice del grafo.
      *
      * @param dato el dato del vértice a eliminar
-     * funcion aun experimental puede dar comportamientos no esperados
+     *             funcion aun experimental puede dar comportamientos no esperados
      */
     public void eliminarVertice(String dato) {
         Vertice vertice = new Vertice(dato);
@@ -469,8 +483,6 @@ public class Grafo {
         }
         uptade();
     }
-
-
 
     /**
      * Elimina una arista del grafo.
@@ -491,34 +503,35 @@ public class Grafo {
         uptade();
     }
 
-
-
     /**
-     * Realiza un recorrido en anchura (BFS) en el grafo desde un vértice de inicio hasta un vértice de destino.
-     * Devuelve una lista de enteros que representa la ruta desde el vértice de inicio hasta el vértice de destino.
+     * Realiza un recorrido en anchura (BFS) en el grafo desde un vértice de inicio
+     * hasta un vértice de destino.
+     * Devuelve una lista de enteros que representa la ruta desde el vértice de
+     * inicio hasta el vértice de destino.
      *
      * @param inicio el vértice de inicio del recorrido (su indice)
-     * @param fin el vértice de destino del recorrido (su indice)
-     * @return una lista de enteros que representa la ruta desde el vértice de inicio hasta el vértice de destino
+     * @param fin    el vértice de destino del recorrido (su indice)
+     * @return una lista de enteros que representa la ruta desde el vértice de
+     *         inicio hasta el vértice de destino
      */
     public ArrayList<Integer> BFS(int inicio, int fin) {
         ArrayList<Integer> ruta = new ArrayList<>();
         Queue<Integer> cola = new LinkedList<>();
         boolean[] visitados = new boolean[vertices.size()];
         int[] padre = new int[vertices.size()];
-    
+
         Arrays.fill(padre, -1);
-    
+
         cola.offer(inicio);
         visitados[inicio] = true;
-    
+
         while (!cola.isEmpty()) {
             int actual = cola.poll();
-    
+
             if (actual == fin) {
                 break;
             }
-    
+
             for (int i = 0; i < vertices.size(); i++) {
                 if (adyacencia[actual][i] > 0 && !visitados[i]) {
                     cola.offer(i);
@@ -527,25 +540,28 @@ public class Grafo {
                 }
             }
         }
-    
+
         if (!visitados[fin]) {
             return ruta; // Retorna una lista vacía si no hay camino
         }
-    
+
         for (int i = fin; i != -1; i = padre[i]) {
             ruta.add(0, i);
         }
-    
+
         return ruta;
     }
 
     /**
-     * Realiza un recorrido en anchura (BFS) en el grafo desde un vértice de inicio hasta un vértice de destino.
-     * Devuelve una lista de vértices que representa la ruta desde el vértice de inicio hasta el vértice de destino.
+     * Realiza un recorrido en anchura (BFS) en el grafo desde un vértice de inicio
+     * hasta un vértice de destino.
+     * Devuelve una lista de vértices que representa la ruta desde el vértice de
+     * inicio hasta el vértice de destino.
      *
      * @param inicio el vértice de inicio del recorrido
-     * @param fin el vértice de destino del recorrido
-     * @return una lista de vértices que representa la ruta desde el vértice de inicio hasta el vértice de destino
+     * @param fin    el vértice de destino del recorrido
+     * @return una lista de vértices que representa la ruta desde el vértice de
+     *         inicio hasta el vértice de destino
      */
     public ArrayList<Vertice> BFS(Vertice inicio, Vertice fin) {
         int inicioIndice = getIndiceVertice(inicio);
@@ -588,14 +604,15 @@ public class Grafo {
         return ruta;
     }
 
-
-    
     /**
-     * Realiza un recorrido en profundidad (DFS) en el grafo a partir de un vértice de inicio.
-     * Devuelve una lista con los vértices visitados en el orden en que fueron encontrados.
+     * Realiza un recorrido en profundidad (DFS) en el grafo a partir de un vértice
+     * de inicio.
+     * Devuelve una lista con los vértices visitados en el orden en que fueron
+     * encontrados.
      *
      * @param inicio el vértice de inicio para el recorrido DFS (su indice)
-     * @return una lista con los vértices visitados en el orden en que fueron encontrados
+     * @return una lista con los vértices visitados en el orden en que fueron
+     *         encontrados
      */
     public ArrayList<Integer> DFS(int inicio) {
         boolean[] visitados = new boolean[vertices.size()];
@@ -622,8 +639,10 @@ public class Grafo {
     }
 
     /**
-     * Realiza un recorrido en profundidad (DFS) en el grafo a partir de un vértice de inicio.
-     * Devuelve una lista de vértices visitados en el orden en que fueron encontrados.
+     * Realiza un recorrido en profundidad (DFS) en el grafo a partir de un vértice
+     * de inicio.
+     * Devuelve una lista de vértices visitados en el orden en que fueron
+     * encontrados.
      *
      * @param inicio el vértice de inicio para el recorrido DFS
      * @return una lista de vértices visitados en el orden en que fueron encontrados
@@ -652,8 +671,6 @@ public class Grafo {
 
         return ruta;
     }
-
-
 
     /**
      * Verifica si hay un ciclo en el grafo.
@@ -696,13 +713,12 @@ public class Grafo {
         return false;
     }
 
-
-
-
- // _________________________________________ caminos minimos _________________________________________________________________________________________________________________________
+    // _________________________________________ caminos minimos
+    // _________________________________________________________________________________________________________________________
 
     /**
-     * Aplica el algoritmo de Floyd-Warshall para encontrar las distancias mínimas entre todos los pares de nodos en un grafo ponderado.
+     * Aplica el algoritmo de Floyd-Warshall para encontrar las distancias mínimas
+     * entre todos los pares de nodos en un grafo ponderado.
      * 
      * @param grafo la matriz de adyacencia que representa el grafo ponderado
      * @return la matriz de distancias mínimas entre todos los pares de nodos
@@ -745,11 +761,13 @@ public class Grafo {
     }
 
     /**
-     * Aplica el algoritmo de Floyd-Warshall para encontrar las distancias mínimas entre todos los pares de nodos en el grafo.
+     * Aplica el algoritmo de Floyd-Warshall para encontrar las distancias mínimas
+     * entre todos los pares de nodos en el grafo.
      * 
-     * @return una matriz de distancias mínimas entre todos los pares de nodos en el grafo.
+     * @return una matriz de distancias mínimas entre todos los pares de nodos en el
+     *         grafo.
      */
-    public long[][] floydWarshall() {
+    public long[][] floydWarshall(boolean modo) {
         int V = this.matrizRecorrido().length;
         long[][] distancia = new long[V][V];
 
@@ -772,21 +790,22 @@ public class Grafo {
         }
 
         // Imprimir la matriz de distancias mínimas
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (distancia[i][j] == INFI) {
-                    System.out.print("INF \t");
+        if (modo) {
+            for (int i = 0; i < V; i++) {
+                for (int j = 0; j < V; j++) {
+                    if (distancia[i][j] == INFI) {
+                        System.out.print("INF \t");
 
-                } else {
-                    System.out.print(distancia[i][j] + "\t");
+                    } else {
+                        System.out.print(distancia[i][j] + "\t");
+                    }
                 }
+                System.out.println();
             }
-            System.out.println();
         }
+
         return distancia;
     }
-
-
 
     /**
      * Obtiene una lista de los vecinos del vértice actual en el grafo.
@@ -818,11 +837,13 @@ public class Grafo {
     }
 
     /**
-     * Aplica el algoritmo de Dijkstra para encontrar el camino más corto entre dos vértices en el grafo.
+     * Aplica el algoritmo de Dijkstra para encontrar el camino más corto entre dos
+     * vértices en el grafo.
      * 
      * @param inicio el vértice de inicio del camino
-     * @param fin el vértice de destino del camino
-     * @return una lista de vértices que representa el camino más corto desde el vértice de inicio hasta el vértice de destino,
+     * @param fin    el vértice de destino del camino
+     * @return una lista de vértices que representa el camino más corto desde el
+     *         vértice de inicio hasta el vértice de destino,
      *         o una lista vacía si no hay camino
      */
     public List<Vertice> dijkstra(Vertice inicio, Vertice fin) {
@@ -879,11 +900,13 @@ public class Grafo {
     }
 
     /**
-     * Aplica el algoritmo de Dijkstra para encontrar el camino más corto entre dos vértices en el grafo.
+     * Aplica el algoritmo de Dijkstra para encontrar el camino más corto entre dos
+     * vértices en el grafo.
      * 
      * @param inicio el índice del vértice de inicio del camino
-     * @param fin el índice del vértice de destino del camino
-     * @return una lista de vértices que representa el camino más corto desde el vértice de inicio hasta el vértice de destino,
+     * @param fin    el índice del vértice de destino del camino
+     * @return una lista de vértices que representa el camino más corto desde el
+     *         vértice de inicio hasta el vértice de destino,
      *         o una lista vacía si no hay camino
      */
     public List<Integer> dijkstra(int inicio, int fin) {
@@ -939,20 +962,24 @@ public class Grafo {
         return camino;
     }
 
-
-
     /**
-     * Aplica el algoritmo de Bellman-Ford para encontrar las distancias más cortas desde un nodo fuente a todos los demás nodos en un grafo ponderado.
+     * (Not Working) Aplica el algoritmo de Bellman-Ford para encontrar las
+     * distancias más cortas desde un nodo fuente a todos los demás nodos en un
+     * grafo ponderado.
      * Si hay ciclos negativos en el grafo, devuelve null.
-     *
-     * @param matrizRecorridos la matriz de adyacencia que representa el grafo ponderado.
-     * @param source el nodo fuente desde el cual se calculan las distancias más cortas.
-     * @return un arreglo de distancias más cortas desde el nodo fuente a todos los demás nodos, o null si hay ciclos negativos.
+     * 
+     * @param matrizRecorridos la matriz de adyacencia que representa el grafo
+     *                         ponderado.
+     * @param source           el nodo fuente desde el cual se calculan las
+     *                         distancias más cortas.
+     * @return un arreglo de distancias más cortas desde el nodo fuente a todos los
+     *         demás nodos, o null si hay ciclos negativos.
      */
     public static int[] bellmanFord(int[][] matrizRecorridos, int source) {
         int n = matrizRecorridos.length; // Obtener el número de nodos en el grafo
 
-        // Inicializamos un arreglo de distancias con infinito y un arreglo de visitados a false
+        // Inicializamos un arreglo de distancias con infinito y un arreglo de visitados
+        // a false
         int[] dist = new int[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
         boolean[] visited = new boolean[n];
@@ -977,7 +1004,7 @@ public class Grafo {
 
                 // Actualizamos las distancias de los nodos adyacentes
                 for (int v = 0; v < n; v++) {
-                    int w =(int) matrizRecorridos[u][v]; // Peso de la arista
+                    int w = (int) matrizRecorridos[u][v]; // Peso de la arista
 
                     // Si la nueva distancia es menor que la distancia actual, la actualizamos
                     if (w != 0 && dist[v] > dist[u] + w) {
@@ -991,7 +1018,7 @@ public class Grafo {
         // Verificamos si hay ciclos negativos en el grafo
         for (int u = 0; u < n; u++) {
             for (int v = 0; v < n; v++) {
-                int w = (int)matrizRecorridos[u][v]; // Peso de la arista
+                int w = (int) matrizRecorridos[u][v]; // Peso de la arista
 
                 // Si existe un camino más corto, entonces hay un ciclo negativo
                 if (w != 0 && dist[v] > dist[u] + w) {
@@ -1003,19 +1030,24 @@ public class Grafo {
         // Devolvemos el arreglo de distancias más cortas
         return dist;
     }
-  
+
     /**
-     * Aplica el algoritmo de Bellman-Ford para encontrar las distancias más cortas desde un nodo fuente a todos los demás nodos en el grafo.
+     * (Not Working) Aplica el algoritmo de Bellman-Ford para encontrar las
+     * distancias más cortas desde un nodo fuente a todos los demás nodos en el
+     * grafo.
      * Si hay ciclos negativos en el grafo, devuelve null.
      *
-     * @param source el nodo fuente desde el cual se calculan las distancias más cortas
-     * @return un arreglo de enteros que representa las distancias más cortas desde el nodo fuente a todos los demás nodos en el grafo,
+     * @param source el nodo fuente desde el cual se calculan las distancias más
+     *               cortas
+     * @return un arreglo de enteros que representa las distancias más cortas desde
+     *         el nodo fuente a todos los demás nodos en el grafo,
      *         o null si hay ciclos negativos en el grafo
      */
     public int[] bellmanFord(int source) {
         int n = adyacencia.length; // Obtener el número de nodos en el grafo
 
-        // Inicializamos un arreglo de distancias con infinito y un arreglo de visitados a false
+        // Inicializamos un arreglo de distancias con infinito y un arreglo de visitados
+        // a false
         int[] dist = new int[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
         boolean[] visited = new boolean[n];
@@ -1040,7 +1072,7 @@ public class Grafo {
 
                 // Actualizamos las distancias de los nodos adyacentes
                 for (int v = 0; v < n; v++) {
-                    int w =(int) adyacencia[u][v]; // Peso de la arista
+                    int w = (int) adyacencia[u][v]; // Peso de la arista
 
                     // Si la nueva distancia es menor que la distancia actual, la actualizamos
                     if (w != 0 && dist[v] > dist[u] + w) {
@@ -1054,7 +1086,7 @@ public class Grafo {
         // Verificamos si hay ciclos negativos en el grafo
         for (int u = 0; u < n; u++) {
             for (int v = 0; v < n; v++) {
-                int w = (int)adyacencia[u][v]; // Peso de la arista
+                int w = (int) adyacencia[u][v]; // Peso de la arista
 
                 // Si existe un camino más corto, entonces hay un ciclo negativo
                 if (w != 0 && dist[v] > dist[u] + w) {
@@ -1067,46 +1099,46 @@ public class Grafo {
         return dist;
     }
 
+    // _________________________________________ arbol de expansion minimo
+    // _________________________________________________________________________________________________________________________
 
-
- // _________________________________________ arbol de expansion minimo _________________________________________________________________________________________________________________________
-
-        
     /**
-     * Método que aplica el algoritmo de Kruskal para obtener un árbol de expansión mínima del grafo.
+     * Método que aplica el algoritmo de Kruskal para obtener un árbol de expansión
+     * mínima del grafo.
+     * 
      * @return Un nuevo grafo que representa el árbol de expansión mínima.
      */
-    public Grafo kruscal(){
+    public Grafo kruscal() {
         Kruskal graph = new Kruskal(this.vertices.size());
-        for(Vertice vertice:vertices){
-            for (Arista arista:vertice.getAristas()){
+        for (Vertice vertice : vertices) {
+            for (Arista arista : vertice.getAristas()) {
                 graph.addEdge(getIndiceVertice(vertice), getIndiceVertice(arista.getDestino()), arista.getPeso());
             }
         }
         Grafo newGrafo = new Grafo(modalidad);
-        ArrayList<int[]> verticesPos= graph.kruskalMST();
-        for (int[] vertice:verticesPos){
-            Vertice newVerticeOrigen = new Vertice(vertices.get(vertice[0]).getDato(), vertices.get(vertice[0]).getID());
-            Vertice newVerticeDestino = new Vertice(vertices.get(vertice[1]).getDato(), vertices.get(vertice[1]).getID());
+        ArrayList<int[]> verticesPos = graph.kruskalMST();
+        for (int[] vertice : verticesPos) {
+            Vertice newVerticeOrigen = new Vertice(vertices.get(vertice[0]).getDato(),
+                    vertices.get(vertice[0]).getID());
+            Vertice newVerticeDestino = new Vertice(vertices.get(vertice[1]).getDato(),
+                    vertices.get(vertice[1]).getID());
             newGrafo.conectarVertice(newVerticeOrigen, newVerticeDestino, vertice[2]);
         }
         return newGrafo;
     }
-    
-    public void PRIM(){
+
+    public void PRIM() {
         PRIM prim = new PRIM();
         prim.primMST(adyacencia);
     }
 
-
-
-    
     /**
-     * Calcula el flujo máximo utilizando el algoritmo de Ford-Fulkerson en un grafo dado.
+     * Calcula el flujo máximo utilizando el algoritmo de Ford-Fulkerson en un grafo
+     * dado.
      * 
-     * @param graph el grafo representado como una matriz de adyacencia
+     * @param graph  el grafo representado como una matriz de adyacencia
      * @param source el nodo fuente del grafo
-     * @param fin el nodo final del grafo
+     * @param fin    el nodo final del grafo
      * @return el flujo máximo en el grafo
      */
     public static int fordFulkerson(int graph[][], int source, int fin) {
@@ -1114,7 +1146,8 @@ public class Grafo {
         int maxFlow = 0;
         int parent[] = new int[graph.length];
 
-        // Encuentra un camino aumentante en el grafo residual y actualiza el flujo máximo
+        // Encuentra un camino aumentante en el grafo residual y actualiza el flujo
+        // máximo
         while (Grafo.bfs(graph, source, fin, parent)) {
             int pathFlow = Integer.MAX_VALUE;
             int s = fin;
@@ -1161,12 +1194,12 @@ public class Grafo {
 
         return visited[fin];
     }
-    
-
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Grafo)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Grafo))
+            return false;
         Grafo grafo = (Grafo) o;
         return modalidad == grafo.modalidad && vertices.equals(grafo.vertices);
     }

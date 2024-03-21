@@ -1,21 +1,27 @@
 package superarbol;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
 
     public static void main(String[] args) {
 
         Arbol arbolito = new Arbol();
-        int[] valores = { 9,10, 5, 15, 3, 7, 12, 17, 2, 4, 6, 8, 11, 13, 16, 18};
+        Random random = new Random();
+        ArrayList<Integer> valores = new ArrayList<Integer>();
+        for (int i = 0; i < 10; i++) {
+            valores.add(random.nextInt(10));
+            System.out.println(valores.get(i));
+        }
         int x = 0;
         for (int valore : valores) {
             x++;
            /*  System.out.println("#______________________#");
             System.out.println("Paso: " + x);
  */
-            // arbolito.agregar(valore);
-            arbolito.insertar(valore);
+             arbolito.agregar(valore);
+            //arbolito.insertar(valore);
             // arbolito.TreePrinter();
 
         }
@@ -25,10 +31,12 @@ public class Main {
         
         System.out.println("#______________________#");
         System.out.println("Arbol balanceado");
-        arbolito.printTopView();
+        arbolito.printer_ifwaszzz(arbolito.raiz);
         //arbolito.balanceararbol().TreePrinter();
         System.err.println();
-        ArrayList<Nodo> lista = arbolito.listanodos;
+        TreePrinter printer = new TreePrinter();
+        TreePrinter.printNode(arbolito.raiz);
+
         /*
          * for (Nodo nodes : lista) {
          * System.out.println("#______________________#");

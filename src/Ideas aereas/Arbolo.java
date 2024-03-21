@@ -1,5 +1,5 @@
-package superarbol;
 
+import superarbol.Nodo;
 import java.util.ArrayList;
 
 //matriz de piramide de pascal
