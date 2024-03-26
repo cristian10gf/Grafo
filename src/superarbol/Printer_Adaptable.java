@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.List;
 
+//falta arrreglar el movimiento entre las listas
+//en vez de posicionar el valor del hijo posteriormente a la linea del padre, se puede posicionar al padre y enseguida añadir los valores de los hijos en base a la posicion del padre
 public class Printer_Adaptable {
 
     List<List<String>> Primitive_Array;
@@ -77,6 +79,7 @@ public class Printer_Adaptable {
         // --------------------------------------------------------------------------------------//
         // le añadimos el valor traducido a cada lista en el orden que se encuentran en
         // el vector
+
         /*
          * for (List<String> lista : printer.Primitive_Array) {
          * // lista.add(lista.size()/2,
@@ -121,11 +124,13 @@ public class Printer_Adaptable {
          * }
          */
         // --------------------------------------------------------------------------------------//
-        int p = 0;
+
         for (int i = 0; i <= arbolito.AlturaMax(); i++) {
             List<String> lista = printer.Primitive_Array.get(i);
             if (i == 0) {
-                lista.set(lista.size() / 2, printer.traductor(arbolito.buscarnodo_altura(i).get(i).dato));
+                lista.add((lista.size() / 2),
+                        printer.traductor(arbolito.buscarnodo_altura(i).get(i).dato));
+
             } else if (i == 1) {
 
                 for (int j = 0; j < arbolito.buscarnodo_altura(i).size(); j++) {
@@ -133,30 +138,93 @@ public class Printer_Adaptable {
                             .indexOf(printer.traductor(arbolito.buscarnodo_altura(i).get(j).padre.dato));
 
                     if (arbolito.buscarnodo_altura(i).get(j).padre.izquierdo == arbolito.buscarnodo_altura(i).get(j)) {
-                        lista.set(pospadre - 2, printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        lista.set(pospadre - 2,
+                                printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
                     } else {
-                        lista.set(pospadre + 2, printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        lista.set(pospadre + 2,
+                                printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
                     }
                 }
-            } else {
-                p++;
+            } else if (i == 2) {
                 for (int j = 0; j < arbolito.buscarnodo_altura(i).size(); j++) {
+                    /* if (j == 0) {
+                        int pospadre = printer.Primitive_Array.get(i - 1)
+                                .indexOf(printer.traductor(arbolito.buscarnodo_altura(i).get(j).padre.dato));
+                        if (arbolito.buscarnodo_altura(i).get(j).padre.izquierdo == arbolito.buscarnodo_altura(i)
+                                .get(j)) {
+                            lista.add(pospadre - 1,
+                                    printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        } else {
+                            lista.add(pospadre + 1,
+                                    printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+
+                        }
+                    } else { */
+                        int pospadre = printer.Primitive_Array.get(i - 1)
+                                .indexOf(printer.traductor(arbolito.buscarnodo_altura(i).get(j).padre.dato));
+                        int p=0;
+                        if (arbolito.buscarnodo_altura(i).get(j).padre.izquierdo == arbolito.buscarnodo_altura(i)
+                                .get(j)) {
+                            lista.set(pospadre - 1,
+                                    printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                            for (int k = 0; k < i; k++) {
+
+                                printer.Primitive_Array.get(k).add(pospadre-1+ p++, "-  -");
+                            }
+                        } else {
+                            lista.set(pospadre + 1,
+                                    printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                            for (int k = 0; k < i; k++) {
+
+                                printer.Primitive_Array.get(k).add(pospadre +p++, "-  -");
+                            }
+                        }
+                    //}
+                }
+            } else {
+                for (int j = 0; j < arbolito.buscarnodo_altura(i).size(); j++) {
+                    int p=0;
                     int pospadre = printer.Primitive_Array.get(i - 1)
                             .indexOf(printer.traductor(arbolito.buscarnodo_altura(i).get(j).padre.dato));
 
                     if (arbolito.buscarnodo_altura(i).get(j).padre.izquierdo == arbolito.buscarnodo_altura(i).get(j)) {
-                        lista.set(pospadre - i, printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        lista.add(pospadre - 1,
+                                printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+
+                        for (int k = 0; k < i; k++) {
+
+                            printer.Primitive_Array.get(k).add(pospadre + p++, "-  -");
+                        }
+
                     } else {
-                        lista.set(pospadre -i+ 2, printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        lista.add(pospadre + 1,
+                                printer.traductor(arbolito.buscarnodo_altura(i).get(j).dato));
+                        for (int k = 0; k < i; k++) {
+
+                            printer.Primitive_Array.get(k).add(pospadre + p++, "-  -");
+                        }
                     }
                 }
             }
-            for (String x : lista) {
+            System.out.println();
+        }
+
+        for (int i = 0; i <= arbolito.AlturaMax(); i++) {
+            for (String x : printer.Primitive_Array.get(i)) {
                 System.out.print(x + "");
             }
             System.out.println();
         }
 
+        for (int i = 0; i <= arbolito.AlturaMax(); i++) {
+            System.out.println("Altura: " + i);
+            for (Nodo x : arbolito.buscarnodo_altura(i)) {
+
+                System.out.print(x.dato + " ");
+
+            }
+            System.out.println();
+        }
         System.out.println("Arbol final: " + arbolito.AlturaMax());
         arbolito.printer_ifwaszzz(arbolito.raiz);
         // arbolito.TreePrinter();

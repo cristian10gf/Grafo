@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.List;
 
 //Implementaciones Pendientes:
 // Implementar la funcion de eliminacion de nodos
@@ -53,7 +54,7 @@ public class Arbol {
             this.listaNodos.add(nodo);
         } else {
             agregarRecursivo(this.raiz, nodo);
-            this.listaNodos.add(nodo);
+            
         }
     }
 
@@ -70,20 +71,22 @@ public class Arbol {
                 nodo.izquierdo = nuevoNodo;
                 nodo.izquierdo.padre = nodo;
                 nodo.izquierdo.alturaNodo = Alturanodo(nodo) + 1;
+                this.listaNodos.add(nuevoNodo);
             } else {
                 agregarRecursivo(nodo.izquierdo, nuevoNodo);
-                nodo.alturaNodo = Alturanodo(nodo);
+                //nodo.alturaNodo = Alturanodo(nodo);
             }
         } else if (nuevoNodo.dato > nodo.dato) {
             if (nodo.derecho == null) {
                 nodo.derecho = nuevoNodo;
                 nodo.derecho.padre = nodo;
                 nodo.derecho.alturaNodo = Alturanodo(nodo) + 1;
+                this.listaNodos.add(nuevoNodo);
             } else {
                 agregarRecursivo(nodo.derecho, nuevoNodo);
-                nodo.alturaNodo = Alturanodo(nodo);
+                //nodo.alturaNodo = Alturanodo(nodo);
             }
-        } else {
+        } else if(buscarnodo(nuevoNodo.dato) != null) {
             System.out.println("El nodo ya existe");
         }
     }
@@ -315,7 +318,17 @@ public class Arbol {
                 nodos.add(nodo);
             }
         }
-        return nodos;
+         //ordenamos la lista de nodos por su valor de menor a mayor
+        List <Integer> nodosOrdenados =  new ArrayList<Integer>();
+        for (Nodo nodo : nodos) {
+            nodosOrdenados.add(nodo.dato);
+        }
+        nodosOrdenados.sort(null);
+        ArrayList<Nodo> nodosOrdenadosNodos = new ArrayList<Nodo>();
+        for (int i = 0; i < nodosOrdenados.size(); i++) {
+            nodosOrdenadosNodos.add(buscarnodo(nodosOrdenados.get(i)));
+        } 
+        return nodosOrdenadosNodos;
     }
     
     
