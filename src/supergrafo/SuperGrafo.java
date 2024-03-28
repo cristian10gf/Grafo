@@ -24,9 +24,8 @@ public class SuperGrafo {
         
         int[] nose= Grafo.bellmanFord(grafo.getAdyacencia(),grafo.getIndiceVertice(v2));
         
-        
-        
-        System.out.println("Belman Ford");
+
+        System.out.println("Belman Ford: No Sirve");
         for (int i = 0; i < nose.length; i++){
             System.out.println(nose[i]);
         }
@@ -43,6 +42,9 @@ public class SuperGrafo {
         var camino = grafo.hayCiclo();
         System.out.println(camino);
 
+        var g1 = grafo.PRIM();
+        var g2 = grafo.kruscal();
+        g2.imprimir_grafo();
     }
     
 }

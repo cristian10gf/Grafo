@@ -1,10 +1,17 @@
 package supergrafo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PRIM {
-    private static final int V = 5; // Número de vértices en el grafo
+    private int V = 5; // Número de vértices en el grafo
     private static final int INF = Integer.MAX_VALUE; // Valor infinito para representar la ausencia de conexión
+    public ArrayList<int[]> results;
+
+    public PRIM(int n, int[][] graph) {
+        V = n;
+        results = primMST(graph);
+    }
 
     // Función para encontrar el vértice con el mínimo valor de clave,
     // que aún no ha sido incluido en el árbol de expansión mínima
@@ -22,15 +29,18 @@ public class PRIM {
     }
 
     // Imprime el árbol de expansión mínima
-    void printMST(int[] parent, int[][] graph) {
-        System.out.println("Arista \t Peso");
+    ArrayList<int[]> printMST(int[] parent, int[][] graph) {
+        ArrayList<int[]> result = new ArrayList<int[]>();
+        //System.out.println("Arista \t Peso");
         for (int i = 1; i < V; i++) {
-            System.out.println(parent[i] + " - " + i + "\t" + graph[i][parent[i]]);
+            int[] temp = {parent[i], i, graph[i][parent[i]]};
+            result.add(temp);
         }
+        return result;
     }
 
     // Algoritmo de Prim para encontrar el árbol de expansión mínima
-    void primMST(int[][] graph) {
+    ArrayList<int[]> primMST(int[][] graph) {
         int[] parent = new int[V]; // Almacena el árbol de expansión mínima
         int[] key = new int[V]; // Almacena las claves (pesos) de los vértices
         boolean[] visited = new boolean[V]; // Almacena los vértices visitados
@@ -57,6 +67,6 @@ public class PRIM {
         }
 
         // Imprime el árbol de expansión mínima
-        printMST(parent, graph);
+        return printMST(parent, graph);
     }
 }
