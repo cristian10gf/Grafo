@@ -29,6 +29,7 @@ public class SuperGrafo {
 
         //grafo.eliminarVertice(v6);
         grafo.imprimir_grafo();
+        
 
     }
     

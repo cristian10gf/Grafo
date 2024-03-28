@@ -54,7 +54,7 @@ public class Arbol {
             this.listaNodos.add(nodo);
         } else {
             agregarRecursivo(this.raiz, nodo);
-            
+
         }
     }
 
@@ -74,7 +74,7 @@ public class Arbol {
                 this.listaNodos.add(nuevoNodo);
             } else {
                 agregarRecursivo(nodo.izquierdo, nuevoNodo);
-                //nodo.alturaNodo = Alturanodo(nodo);
+                // nodo.alturaNodo = Alturanodo(nodo);
             }
         } else if (nuevoNodo.dato > nodo.dato) {
             if (nodo.derecho == null) {
@@ -84,9 +84,9 @@ public class Arbol {
                 this.listaNodos.add(nuevoNodo);
             } else {
                 agregarRecursivo(nodo.derecho, nuevoNodo);
-                //nodo.alturaNodo = Alturanodo(nodo);
+                // nodo.alturaNodo = Alturanodo(nodo);
             }
-        } else if(buscarnodo(nuevoNodo.dato) != null) {
+        } else if (buscarnodo(nuevoNodo.dato) != null) {
             System.out.println("El nodo ya existe");
         }
     }
@@ -104,14 +104,15 @@ public class Arbol {
         return nodo.alturaNodo;
     }
 
-    public static int getcol(int h) {
+    public static int getcol(int h) { // Devuelve la cantidad de columnas que tendra el arbol
         if (h == 1) {
             return 1;
         }
         return getcol(h - 1) + getcol(h - 1) + 1;
     }
 
-    public static void printTree(int[][] M, Nodo root, int col, int row, int height) {
+    public static void printTree(int[][] M, Nodo root, int col, int row, int height) { // rellena una matriz con los
+                                                                                       // nodos del arbol
         if (root == null) {
             return;
         }
@@ -120,8 +121,8 @@ public class Arbol {
         printTree(M, root.derecho, col + (int) Math.pow(2, height - 2), row + 1, height - 1);
     }
 
-    public void TreePrinter() {
-        int h = Altura(this.raiz);
+    public void TreePrinter() { // imprime el arbol de manera rudimentaria
+        int h = Alturanodo(this.raiz);
         int col = getcol(h);
         int[][] M = new int[h][col];
         printTree(M, this.raiz, col / 2, 0, h);
@@ -146,7 +147,7 @@ public class Arbol {
     }
 
     public int[][] Matrizdeposicion() { // devuelve una matriz con la posicion de los nodos en el arbol
-        int h = Altura(this.raiz);
+        int h = Alturanodo(this.raiz);
         int col = getcol(h);
         int[][] M = new int[h][col];
         printTree(M, this.raiz, col / 2, 0, h);
@@ -170,14 +171,6 @@ public class Arbol {
         System.out.println(ñodo.dato);
     }
 
-    public static int Altura(Nodo nodo) { // funcion para calcular la altura de un nodo;Solo se usa para encontrar H en
-                                          // el treeprinter
-        if (nodo == null) {
-            return 0;
-        }
-        return Math.max(Altura(nodo.izquierdo), Altura(nodo.derecho)) + 1;
-    }
-
     public int AlturaMax() { // funcion para calcular la altura maxima del arbol
         int max = 0;
         for (Nodo nodo : this.listaNodos) {
@@ -187,6 +180,35 @@ public class Arbol {
         }
         return max;
     }
+
+    public void subnodo(Nodo nodo, ArrayList<Nodo> descendencia) { // rellena un array con la descendencia de un nodo dado
+        if (nodo != null) {
+            descendencia.add(nodo);
+        }
+        if (nodo.izquierdo != null) {
+            subnodo(nodo.izquierdo, descendencia);
+        }
+        if (nodo.derecho != null) {
+            subnodo(nodo.derecho, descendencia);
+        }
+    }
+
+    public ArrayList<Nodo> descendientes(Nodo nodo) { // devuelve una lista con los descendientes de un nodo dado 
+        ArrayList<Nodo> descendientes = new ArrayList<Nodo>();
+        subnodo(nodo, descendientes);
+        descendientes.remove(nodo);
+        return descendientes;
+    }
+
+    public Arbol subArbol(Nodo nodo) { // devuelve un subarbol en base a un nodo dado
+        Arbol subArbol = new Arbol(nodo);
+        subArbol.raiz = nodo;
+        subArbol.listaNodos = new ArrayList<Nodo>();
+        subArbol.listaNodos.add(nodo);
+        subArbol.listaNodos.addAll(descendientes(nodo));
+        return subArbol;
+    }
+    
 
     // _____________________________________Funciones para el funcionamiento del
     // arbol AVL______________________________________//
@@ -222,8 +244,9 @@ public class Arbol {
         }
     }
 
-    public Nodo insertar(Nodo nodo, int valor) {// insertar un nodo en el arbol; Al insertarse el arbol se balancea en
-                                                // base a la altura de los nodos
+    public Nodo insertar(Nodo nodo, int valor) {// insertar un nodo en el arbol; Al insertarse en el arbol se balancea
+                                                // en
+                                                // base a la altura de los nodos;not working
         if (nodo == null) {
             System.out.println("Nodo nuevo");
             Nodo nuevo = new Nodo(valor);
@@ -264,30 +287,6 @@ public class Arbol {
 
     }
 
-    /**
-     * Updates the weight of a node by counting the number of branches it has.
-     * The branch is only counted if it is downward, meaning it does not have
-     * sibling nodes when creating the branch.
-     * 
-     * @param nodo The node to update the weight for.
-     */
-    public void actualizarpeso(Nodo nodo) {// cuenta cuantas ramificaciones tiene un nodo, la ramificacion solo se
-                                           // cuenta si es hacia bajo==que al crear la rama no tenga nodos hermanos
-
-        if (nodo == null) {
-            return;
-        }
-        if (nodo.padre != null) {
-            if (nodo.padre.derecho == nodo) {
-                nodo.padre.peso_derecho++;
-                actualizarpeso(nodo.padre);
-            } else {
-                nodo.padre.peso_izquierdo++;
-                actualizarpeso(nodo.padre);
-            }
-        }
-    }
-
     public Arbol balanceararbol() { // balancea el arbol en base a la altura de los nodos
         Arbol arboltemp = new Arbol();
         ArrayList<Integer> nodosordenados = new ArrayList<Integer>();
@@ -318,8 +317,8 @@ public class Arbol {
                 nodos.add(nodo);
             }
         }
-         //ordenamos la lista de nodos por su valor de menor a mayor
-        List <Integer> nodosOrdenados =  new ArrayList<Integer>();
+        // ordenamos la lista de nodos por su valor de menor a mayor
+        List<Integer> nodosOrdenados = new ArrayList<Integer>();
         for (Nodo nodo : nodos) {
             nodosOrdenados.add(nodo.dato);
         }
@@ -327,18 +326,40 @@ public class Arbol {
         ArrayList<Nodo> nodosOrdenadosNodos = new ArrayList<Nodo>();
         for (int i = 0; i < nodosOrdenados.size(); i++) {
             nodosOrdenadosNodos.add(buscarnodo(nodosOrdenados.get(i)));
-        } 
+        }
         return nodosOrdenadosNodos;
     }
-    
-    
-    
-    
-    
-    
-    // _______________________Funciones Extra No-Esenciales__________________________________//
 
-    public Nodo buscarnodo_recursivo(Nodo nodo, int valor) { // funcion para buscar un nodo en el arbol en base a su valor
+    // _______________________Funciones Extra
+    // No-Esenciales__________________________________//
+
+    /**
+     * Updates the weight of a node by counting the number of branches it has.
+     * The branch is only counted if it is downward, meaning it does not have
+     * sibling nodes when creating the branch.
+     * 
+     * @param nodo The node to update the weight for.
+     */
+    public void actualizarpeso(Nodo nodo) {// cuenta cuantas ramificaciones tiene un nodo, la ramificacion solo se
+        // cuenta si es hacia bajo==que al crear la rama no tenga nodos hermanos;No se
+        // usa
+
+        if (nodo == null) {
+            return;
+        }
+        if (nodo.padre != null) {
+            if (nodo.padre.derecho == nodo) {
+                nodo.padre.peso_derecho++;
+                actualizarpeso(nodo.padre);
+            } else {
+                nodo.padre.peso_izquierdo++;
+                actualizarpeso(nodo.padre);
+            }
+        }
+    }
+
+    public Nodo buscarnodo_recursivo(Nodo nodo, int valor) { // funcion para buscar un nodo en el arbol en base a su
+                                                             // valor
         if (nodo == null) {
             return null;
         }
@@ -350,11 +371,12 @@ public class Arbol {
         }
         return buscarnodo_recursivo(nodo.izquierdo, valor);
     }
+
     public Nodo buscarnodo(int valor) { // funcion para buscar un nodo en el arbol en base a su valor
         return buscarnodo_recursivo(this.raiz, valor);
     }
 
-    public void printer_ifwaszzz(Nodo node) { // imprime el arbol de manera bonita; me lo robe de github
+    public void printer_ifwaszzz(Nodo node) { // imprime el arbol de manera pragamtica; me lo robe de github
         String str = "";
         if (node.izquierdo != null)
             str += node.izquierdo.dato + "=>";
@@ -487,7 +509,7 @@ public class Arbol {
         }
     }
 
-    public void printTopView() {
+    public void printTopView() { // imprime la vista superior del arbol
         // base case
         if (this.raiz == null) {
             return;
