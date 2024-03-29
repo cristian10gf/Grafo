@@ -335,6 +335,17 @@ public class Grafo {
         return vertice.grado();
     }
 
+    /**
+     * Devuelve el grado de un vértice en el grafo.
+     * El grado de un vértice se refiere al número de aristas que tiene el vértice en el grafo.
+     *
+     * @param vertice el índice del vértice a buscar
+     * @return el grado del vértice en el grafo
+     */
+    public int grado(int vertice){
+        return vertices.get(vertice).grado();
+    }
+
   
     /**
      * Devuelve una arista entre dos vértices en el grafo.
@@ -1210,22 +1221,22 @@ public class Grafo {
             throw new IllegalArgumentException("La matriz de adyacencia no es cuadrada");
         }
 
-        if (validarModalidad(modalidad) != 3 && validarModalidad(modalidad) != 4 && validarModalidad(modalidad) != 1 && validarModalidad(modalidad) != 2){
+        if (modalidad != "Dirigido" && modalidad != "No dirigido" && modalidad != "Ponderado" && modalidad != "No ponderado" ){
             throw new IllegalArgumentException("La modalidad no es válida");
         }
 
         for (int i = 0; i < n; i++){
             for (int j = 0; j < n; j++){
                 if (adyacencia[i][j] != 0){
-                    graph.addEdge(new Vertice(i, j, adyacencia[i][j]);
+                    graph.addEdge(i, j, adyacencia[i][j]);
                 }
             }
         }
         ArrayList<int[]> verticesPos= graph.kruskalMST();
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
         for (int[] vertice:verticesPos){
-            Vertice newVerticeOrigen = new Vertice(vertices.get(vertice[0]).getDato(), vertices.get(vertice[0]).getID());
-            Vertice newVerticeDestino = new Vertice(vertices.get(vertice[1]).getDato(), vertices.get(vertice[1]).getID());
+            Vertice newVerticeOrigen = new Vertice(Integer.toString(vertice[0]));
+            Vertice newVerticeDestino = new Vertice(Integer.toString(vertice[1]));
             newVertices.put(vertice[0], newVerticeOrigen);
             newVertices.put(vertice[1], newVerticeDestino);
         }
@@ -1236,7 +1247,10 @@ public class Grafo {
     }
 
 
-
+    /**
+     * Método que aplica el algoritmo de PRIM para obtener un árbol de expansión mínima del grafo.
+     * @return Un nuevo grafo que representa el árbol de expansión mínima.
+     */
     public Grafo PRIM(){
         PRIM prim = new PRIM(this.vertices.size(),adyacencia);
         ArrayList<int[]> resultado = prim.results;
@@ -1274,7 +1288,7 @@ public class Grafo {
             throw new IllegalArgumentException("La matriz de adyacencia no es cuadrada");
         }
 
-        if (validarModalidad(modalidad) != 3 && validarModalidad(modalidad) != 4 && validarModalidad(modalidad) != 1 && validarModalidad(modalidad) != 2){
+        if (modalidad != "Dirigido" && modalidad != "No dirigido" && modalidad != "Ponderado" && modalidad != "No ponderado" ){
             throw new IllegalArgumentException("La modalidad no es válida");
         }
 
@@ -1283,8 +1297,8 @@ public class Grafo {
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
         Grafo newGrafo = new Grafo(modalidad);
         for (int[] vertice:resultado){
-            Vertice newVerticeOrigen = new Vertice(vertice[0], vertice[0]);
-            Vertice newVerticeDestino = new Vertice(vertice[1], vertice[1]);
+            Vertice newVerticeOrigen = new Vertice(Integer.toString(vertice[0]), vertice[0]);
+            Vertice newVerticeDestino = new Vertice(Integer.toString(vertice[0]), vertice[1]);
             newVertices.put(vertice[0], newVerticeOrigen);
             newVertices.put(vertice[1], newVerticeDestino);
         }
@@ -1295,7 +1309,534 @@ public class Grafo {
     }
 
 
+
+    // _________________________________________ GRAFOS Especificos _________________________________________________________________________________________________________________________
+
+    /**
+     * metodo que retorna un grafo Trivial no dirigido y no ponderado
+     * @return Grafo
+     */
+    public static Grafo grafoTrivial(){
+        Grafo grafo = new Grafo();
+        Vertice vertice = new Vertice("0");
+        grafo.addVertice(vertice);
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Trivial con modalidad
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoTrivial(String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        Vertice vertice = new Vertice("0");
+        grafo.addVertice(vertice);
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Nulo no dirigido y no ponderado
+     * @return Grafo
+     */
+    public static Grafo grafoNulo(){
+        Grafo grafo = new Grafo();
+        return grafo;
+    }
+
+    
+    /**
+     * metodo que retorna un grafo vacio con n vertices y no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoVacio(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        return grafo;
+    }
+
+
+    /**
+     * metodo que retorna un grafo completo con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoCompleto(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = i+1; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j));
+            }
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo completo con n vertices No dirigido y No ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoCompleto(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = i+1; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j));
+            }
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo completo con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoCompletoPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = i+1; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j), (int)(Math.random()*100));
+            }
+        }
+        return grafo;
+    }
+
+    
+    /**
+     * metodo que retorna un grafo lineal con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoLineal(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo lineal con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoLineal(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo lineal con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoLinealPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1), (int)(Math.random()*100));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo ciclo con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoCiclo(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0));
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo ciclo con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoCiclo(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0));
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo ciclo con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoCicloPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1), (int)(Math.random()*100));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0), (int)(Math.random()*100));
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo rueda con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoRueda(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0));
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i));
+        }
+        return grafo;
+    }
+
+
+    /**
+     * metodo que retorna un grafo rueda con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoRueda(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0));
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo rueda con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoRuedaPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1), (int)(Math.random()*100));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0), (int)(Math.random()*100));
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i), (int)(Math.random()*100));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo estrella con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoEstrella(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo estrella con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoEstrella(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i));
+        }
+        return grafo;
+
+    }
+
+    /**
+     * metodo que retorna un grafo estrella con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoEstrellaPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i), (int)(Math.random()*100));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Bipartito completo con n vertices y no ponderado
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoBipartitoCompleto(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = 0; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j+nVertices));
+            }
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Bipartito completo con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoBipartitoCompleto(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = 0; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j+nVertices));
+            }
+        }
+        return grafo;
+
+    }
+
+    /**
+     * metodo que retorna un grafo Bipartito completo con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoBipartitoCompletoPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            for (int j = 0; j < nVertices; j++){
+                grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(j+nVertices), (int)(Math.random()*100));
+            }
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Bipartito con n vertices
+     * @param nVertices
+     * @param modalidad
+     * @return Grafo
+     */
+    public static Grafo grafoBipartito(int nVertices, String modalidad){
+        Grafo grafo = new Grafo(modalidad);
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+nVertices));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo Bipartito con n vertices no dirigido y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoBipartito(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+nVertices));
+        }
+        return grafo;
+    }
+    
+
+    /**
+     * metodo que retorna un grafo Bipartito con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoBipartitoPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("A"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice("B"+Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+nVertices), (int)(Math.random()*100));
+        }
+        return grafo;
+    }
+    
+   
+    
+    
+    
     // _________________________________________ COSAS NO PROBADAS __________________________________________________________________________________________________________________
+
+ 
+    /**
+     * metodo que retorna un grafo plano con n vertices y no ponderado
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoPlano(int nVertices){
+        Grafo grafo = new Grafo();
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0));
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i));
+        }
+        return grafo;
+    }
+
+    /**
+     * metodo que retorna un grafo plano con n vertices no dirigido y ponderado
+     * los pesos de las aristas son aleatorios enteros entre 0 y 100
+     * @param nVertices
+     * @return Grafo
+     */
+    public static Grafo grafoPlanoPonderado(int nVertices){
+        Grafo grafo = new Grafo("Ponderado");
+        for (int i = 0; i < nVertices; i++){
+            Vertice vertice = new Vertice(Integer.toString(i));
+            grafo.addVertice(vertice);
+        }
+        for (int i = 0; i < nVertices-1; i++){
+            grafo.conectarVertice(grafo.vertices.get(i), grafo.vertices.get(i+1), (int)(Math.random()*100));
+        }
+        grafo.conectarVertice(grafo.vertices.get(nVertices-1), grafo.vertices.get(0), (int)(Math.random()*100));
+        for (int i = 1; i < nVertices; i++){
+            grafo.conectarVertice(grafo.vertices.get(0), grafo.vertices.get(i), (int)(Math.random()*100));
+        }
+        return grafo;
+    }
+
 
     // _________________________________________ flujo maximo _________________________________________________________________________________________________________________________
     
@@ -1361,6 +1902,183 @@ public class Grafo {
     }
     
 
+    // _________________________________________ estados del Grafo _________________________________________________________________________________________________________________________
+
+    /**
+     * revisa si el grafo es un grafo conexo
+     * 
+     * @return true si el grafo es conexo, false de lo contrario
+     */
+    public boolean esConexo(){
+        int n = vertices.size();
+        boolean[] visitados = new boolean[n];
+        dfs(0, visitados);
+        for (int i = 0; i < n; i++){
+            if (!visitados[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void dfs(int actual, boolean[] visitados){
+        visitados[actual] = true;
+        for (int vecino : getVecinos(actual)){
+            if (!visitados[vecino]){
+                dfs(vecino, visitados);
+            }
+        }
+    }
+
+    /**
+     * Comprueba si el grafo es un árbol.
+     * No funciona correctamente aun
+     * @return true si el grafo es un árbol, false de lo contrario
+     */
+    public boolean esArbol(){
+        return esConexo() && vertices.size() == getAristas().size() + 1;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo completo.
+     * 
+     * @return true si el grafo es completo, false de lo contrario
+     */
+    public boolean esCompleto(){
+        int n = vertices.size();
+        return getAristas().size() == n*(n-1)/2;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo regular.
+     * 
+     * @return true si el grafo es regular, false de lo contrario
+     */
+    public boolean esRegular(){
+        int grado = vertices.get(0).grado();
+        for (Vertice vertice : vertices){
+            if (vertice.grado() != grado){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo bipartito.
+     * 
+     * @return true si el grafo es bipartito, false de lo contrario
+     */
+    public boolean esBipartito(){
+        int n = vertices.size();
+        int[] colores = new int[n];
+        Arrays.fill(colores, -1);
+        colores[0] = 0;
+        Queue<Integer> cola = new LinkedList<>();
+        cola.add(0);
+        while (!cola.isEmpty()){
+            int actual = cola.poll();
+            for (int vecino : getVecinos(actual)){
+                if (colores[vecino] == -1){
+                    colores[vecino] = 1 - colores[actual];
+                    cola.add(vecino);
+                } else if (colores[vecino] == colores[actual]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo euleriano.
+     * 
+     * @return true si el grafo es euleriano, false de lo contrario
+     */
+    public boolean esEuleriano(){
+        if (!esConexo()){
+            return false;
+        }
+        int nImpares = 0;
+        for (Vertice vertice : vertices){
+            if (vertice.grado() % 2 != 0){
+                nImpares++;
+            }
+        }
+        return nImpares == 0 || nImpares == 2;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo hamiltoniano.
+     * 
+     * @return true si el grafo es hamiltoniano, false de lo contrario
+     */
+    public boolean esHamiltoniano(){
+        int n = vertices.size();
+        if (n < 3){
+            return false;
+        }
+        for (int i = 0; i < n; i++){
+            if (getVecinos(i).size() < n/2){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Comprueba si el grafo es un grafo planar.
+     * 
+     * @return true si el grafo es planar, false de lo contrario
+     */
+    public boolean esPlanar(){
+        int n = vertices.size();
+        int m = getAristas().size();
+        if (n <= 4){
+            return true;
+        }
+        if (m > 3*n - 6){
+            return false;
+        }
+        if (m > 2*n - 4){
+            for (int i = 0; i < n; i++){
+                if (vertices.get(i).grado() >= 6){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * da el coloreo de un grafo
+     *  El coloreo de un grafo es una asignación de colores a los vértices de un grafo de manera que dos vértices adyacentes no tengan el mismo color.
+     *  El número cromático de un grafo es el número mínimo de colores necesarios para colorear el grafo.
+     *
+     * @return el número de colores necesarios para colorear el grafo
+     *        -1 si el grafo no es coloreable
+     */
+    public int getColoreo(){
+        int n = vertices.size();
+        int[] colores = new int[n];
+        Arrays.fill(colores, -1);
+        colores[0] = 0;
+        Queue<Integer> cola = new LinkedList<>();
+        cola.add(0);
+        while (!cola.isEmpty()){
+            int actual = cola.poll();
+            for (int vecino : getVecinos(actual)){
+                if (colores[vecino] == -1){
+                    colores[vecino] = 1 - colores[actual];
+                    cola.add(vecino);
+                } else if (colores[vecino] == colores[actual]){
+                    return -1;
+                }
+            }
+        }
+        return Arrays.stream(colores).max().getAsInt();
+    }
 
     /**
      * Comprueba que dos grafos sean iguales.
