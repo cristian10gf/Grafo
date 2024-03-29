@@ -45,6 +45,10 @@ public class SuperGrafo {
         var g1 = grafo.PRIM();
         var g2 = grafo.kruscal();
         g2.imprimir_grafo();
+
+        var g3 = Grafo.grafoEstrella(4);
+        g3.imprimir_grafo();
+        System.out.println(g1.esPlanar());
     }
     
 }
