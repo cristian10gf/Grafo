@@ -25,12 +25,37 @@ public class SuperGrafo {
         grafo.conectarVertice(v3, v4, 5);
         grafo.conectarVertice(v3, v5, 8);
         
+
         List<Integer> nose = grafo.dijkstra(grafo.getIndiceVertice(v2), grafo.getIndiceVertice(v5));
 
         //grafo.eliminarVertice(v6);
         grafo.imprimir_grafo();
+
+        int[] nose= Grafo.bellmanFord(grafo.getAdyacencia(),grafo.getIndiceVertice(v2));
         
 
+        System.out.println("Belman Ford: No Sirve");
+        for (int i = 0; i < nose.length; i++){
+            System.out.println(nose[i]);
+        }
+        long [][] matriz = grafo.floydWarshall();
+        for (int i = 0; i < matriz.length; i++){
+            for (int j = 0; j < matriz.length; j++){
+                System.out.print(matriz[i][j] + " ");
+            }
+            System.out.println();
+            System.out.println();
+        }
+
+        
+
+        var g1 = grafo.PRIM();
+        var g2 = grafo.kruscal();
+        g2.imprimir_grafo();
+
+        var g3 = Grafo.grafoEstrella(4);
+        g3.imprimir_grafo();
+        System.out.println(g1.esPlanar());
     }
     
 }

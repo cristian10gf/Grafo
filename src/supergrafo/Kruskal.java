@@ -60,9 +60,9 @@ public class Kruskal {
             }
         }
 
-        for (Edge edge : result) {
+        /* for (Edge edge : result) {
             System.out.println(edge.src + " - " + edge.dest + " : " + edge.weight);
-        }
+        } */
         ArrayList<int[]> aristas = new ArrayList<>();
         for (Edge edge : result) {
             int [] valores = {edge.src,edge.dest,edge.weight};

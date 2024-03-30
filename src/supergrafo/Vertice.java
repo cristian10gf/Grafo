@@ -209,4 +209,8 @@ public class Vertice {
             return "ponderado";
         }
     }
+
+    public void eliminarArista(Arista arista){
+        this.aristas.remove(arista);
+    }
 }
