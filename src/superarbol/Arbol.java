@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-import javax.swing.tree.TreeNode;
-
-import org.w3c.dom.Node;
 
 //Implementaciones Pendientes:
 // Implementar la funcion de eliminacion de nodos
@@ -57,7 +54,7 @@ public class Arbol {
      * @param nodo      The current node being evaluated.
      * @param nuevoNodo The new node to be added.
      */
-    public void agregarRecursivo(Nodo nodo, Nodo nuevoNodo) { // agrega un nodo al arbol en base a su dato; no equilibra
+    private void agregarRecursivo(Nodo nodo, Nodo nuevoNodo) { // agrega un nodo al arbol en base a su dato; no equilibra
                                                               // el arbol
         if (nuevoNodo.dato < nodo.dato) {
             if (nodo.izquierdo == null) {
@@ -93,14 +90,14 @@ public class Arbol {
         return nodo.alturaNodo;
     }
 
-    public static int getcol(int h) {
+    private static int getcol(int h) {
         if (h == 1) {
             return 1;
         }
         return getcol(h - 1) + getcol(h - 1) + 1;
     }
 
-    public static void printTree(int[][] M, Nodo root, int col, int row, int height) {
+    private static void printTree(int[][] M, Nodo root, int col, int row, int height) {
         if (root == null) {
             return;
         }

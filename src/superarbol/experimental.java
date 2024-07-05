@@ -1,6 +1,5 @@
 package superarbol;
 
-import java.util.Scanner;
 import java.util.ArrayList;
 
 public class experimental {

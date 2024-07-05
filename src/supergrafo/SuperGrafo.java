@@ -1,11 +1,9 @@
 package supergrafo;
 
-//import java.util.List;
-
 public class SuperGrafo {
     public static void main(String[] args) {
         Grafo grafo = new Grafo("ponderado");
-        System.out.println(grafo.getModalidad());
+        
         Vertice v1 = new Vertice("S");
         Vertice v2 = new Vertice("A");
         Vertice v3 = new Vertice("B");
@@ -22,33 +20,9 @@ public class SuperGrafo {
         grafo.conectarVertice(v3, v4, 5);
         grafo.conectarVertice(v3, v5, 8);
         
-        int[] nose= Grafo.bellmanFord(grafo.getAdyacencia(),grafo.getIndiceVertice(v2));
-        
-
-        System.out.println("Belman Ford: No Sirve");
-        for (int i = 0; i < nose.length; i++){
-            System.out.println(nose[i]);
-        }
-        long [][] matriz = grafo.floydWarshall();
-        for (int i = 0; i < matriz.length; i++){
-            for (int j = 0; j < matriz.length; j++){
-                System.out.print(matriz[i][j] + " ");
-            }
-            System.out.println();
-            System.out.println();
-        }
-        
-        //grafo.imprimir_grafo();
-        var camino = grafo.hayCiclo();
-        System.out.println(camino);
-
-        var g1 = grafo.PRIM();
-        var g2 = grafo.kruscal();
-        g2.imprimir_grafo();
-
-        var g3 = Grafo.grafoEstrella(4);
-        g3.imprimir_grafo();
-        System.out.println(g1.esPlanar());
+        System.out.println(grafo.getModalidad());
+        System.out.println(grafo.gradoMax());
+        System.out.println(grafo.getColoreo());
+        System.out.println(grafo.PRIM());
     }
-    
 }

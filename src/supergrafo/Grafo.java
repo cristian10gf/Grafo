@@ -11,13 +11,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class Grafo {
-
     public static final long INFI = Integer.MAX_VALUE;
-
     private String modalidad; // dirigido, no dirigido, ponderado, dirigido ponderado
     private ArrayList<Vertice> vertices; // lista de vertices del grafo
     private int adyacencia[][]; // matriz de adyacencia del grafo
-
     
     /**
     * Constructor de la clase Grafo.
@@ -1252,8 +1249,7 @@ public class Grafo {
      * @return Un nuevo grafo que representa el árbol de expansión mínima.
      */
     public Grafo PRIM(){
-        PRIM prim = new PRIM(this.vertices.size(),adyacencia);
-        ArrayList<int[]> resultado = prim.results;
+        ArrayList<int[]> resultado = PRIM_methoth(adyacencia, this.vertices.size());
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
         Grafo newGrafo = new Grafo(modalidad);
         for (int[] vertice:resultado){
@@ -1292,8 +1288,7 @@ public class Grafo {
             throw new IllegalArgumentException("La modalidad no es válida");
         }
 
-        PRIM prim = new PRIM(n,adyacencia);
-        ArrayList<int[]> resultado = prim.results;
+        ArrayList<int[]> resultado = PRIM_methoth(adyacencia, n);
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
         Grafo newGrafo = new Grafo(modalidad);
         for (int[] vertice:resultado){
@@ -1308,7 +1303,61 @@ public class Grafo {
         return newGrafo;
     }
 
+    // Función para encontrar el vértice con el mínimo valor de clave,
+    // que aún no ha sido incluido en el árbol de expansión mínima
+    private static int minKey(int[] key, boolean[] visited, int V) {
+        int min = Integer.parseInt(INFI+""), minIndex = -1;
 
+        for (int v = 0; v < V; v++) {
+            if (!visited[v] && key[v] < min) {
+                min = key[v];
+                minIndex = v;
+            }
+        }
+
+        return minIndex;
+    }
+
+    // retorna el árbol de expansión mínima
+    private static ArrayList<int[]> printMST(int[] parent, int[][] graph) {
+        ArrayList<int[]> result = new ArrayList<int[]>();
+        for (int i = 1; i < graph.length; i++) {
+            int[] temp = {parent[i], i, graph[i][parent[i]]};
+            result.add(temp);
+        }
+        return result;
+    }
+
+    // Algoritmo de Prim para encontrar el árbol de expansión mínima
+    private static ArrayList<int[]> PRIM_methoth(int[][] graph, int V) {
+        int[] parent = new int[V]; // Almacena el árbol de expansión mínima
+        int[] key = new int[V]; // Almacena las claves (pesos) de los vértices
+        boolean[] visited = new boolean[V]; // Almacena los vértices visitados
+
+        // Inicializa todas las claves a infinito y todos los vértices como no visitados
+        Arrays.fill(key, Integer.parseInt(INFI+""));
+        Arrays.fill(visited, false);
+
+        // La clave del primer vértice siempre es 0, ya que es el primer vértice del árbol
+        key[0] = 0;
+        parent[0] = -1; // No tiene padre
+
+        for (int count = 0; count < V - 1; count++) {
+            int u = minKey(key, visited, V); // Obtiene el vértice con la clave mínima
+            visited[u] = true;
+
+            // Actualiza las claves de los vértices adyacentes si son menores que las claves actuales
+            for (int v = 0; v < V; v++) {
+                if (graph[u][v] != 0 && !visited[v] && graph[u][v] < key[v]) {
+                    parent[v] = u;
+                    key[v] = graph[u][v];
+                }
+            }
+        }
+
+        // Imprime el árbol de expansión mínima
+        return printMST(parent, graph);
+    }
 
     // _________________________________________ GRAFOS Especificos _________________________________________________________________________________________________________________________
 

@@ -1,5 +1,6 @@
 # Grafo
-# SuperGrafo
+
+## SuperGrafo
 
 Este proyecto implementa varias operaciones y algoritmos comunes en grafos, como la búsqueda en profundidad (DFS), la búsqueda en anchura (BFS), el algoritmo de Prim para encontrar el árbol de expansión mínima y el algoritmo de Kruskal para encontrar el árbol de expansión mínima.
 
@@ -9,14 +10,13 @@ El proyecto tiene la siguiente estructura de directorios:
 
 ```
 build/
-	src/
-		supergrafo/
-			Arista.java
-			Grafo.java
-			Kruskal.java
-			PRIM.java
-			SuperGrafo.java
-			Vertice.java
+ src/
+  supergrafo/
+   Arista.java
+   Grafo.java
+   Kruskal.java
+   SuperGrafo.java
+   Vertice.java
 ```
 
 ## Cómo Compilar y Ejecutar

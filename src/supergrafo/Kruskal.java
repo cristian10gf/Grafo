@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Kruskal {
-
     int V; // Número de vértices del grafo
     List<Edge> edges; // Lista de aristas
 
@@ -21,9 +20,7 @@ public class Kruskal {
 
     // Función para encontrar el conjunto al que pertenece un vértice
     int find(int[] parent, int i) {
-        if (parent[i] == -1) {
-            return i;
-        }
+        if (parent[i] == -1) return i;
         return find(parent, parent[i]);
     }
 
@@ -42,8 +39,7 @@ public class Kruskal {
             parent[i] = -1;
         }
 
-        // Ordena las aristas en orden ascendente de peso
-        Collections.sort(edges, Comparator.comparingInt(e -> e.weight));
+        Collections.sort(edges, Comparator.comparingInt(e -> e.weight)); // Ordena las aristas en orden ascendente de peso
 
         int edgeCount = 0;
         int i = 0;
@@ -59,10 +55,7 @@ public class Kruskal {
                 edgeCount++;
             }
         }
-
-        /* for (Edge edge : result) {
-            System.out.println(edge.src + " - " + edge.dest + " : " + edge.weight);
-        } */
+        
         ArrayList<int[]> aristas = new ArrayList<>();
         for (Edge edge : result) {
             int [] valores = {edge.src,edge.dest,edge.weight};
