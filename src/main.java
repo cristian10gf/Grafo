@@ -1,6 +1,7 @@
-package supergrafo;
+import supergrafo.Grafo;
+import supergrafo.Vertice;
 
-public class SuperGrafo {
+public class main {
     public static void main(String[] args) {
         Grafo grafo = new Grafo(false, true);
         
@@ -58,7 +59,5 @@ public class SuperGrafo {
         System.out.println(grafo.getColoreo());
         System.out.println(grafo.radio());
         var vertices = grafo.diametroConVertices();
-        System.out.println("Diametro: " + vertices[0] + " - " + vertices[1]);
-        System.out.println(grafo.clique());
     }
 }
