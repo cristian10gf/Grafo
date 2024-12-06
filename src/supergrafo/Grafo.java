@@ -77,27 +77,16 @@ public class Grafo {
             this.vertices.add(vertice);
         }
 
-        if (dirigido) {
-            for (int i = 0; i < adyacencia.length; i++) {
-                for (int j = 0; j < adyacencia.length; j++) {
-                    if (adyacencia[i][j] > 0) {
-                        conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < adyacencia.length; i++) {
-                for (int j = 0; j < adyacencia.length; j++) {
-                    if (adyacencia[i][j] > 0 && i <= j) {
-                        System.out.println(adyacencia[i][j] +  ":"+i + ":" + j);
-                        conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
-                    }
+        for (int i = 0; i < adyacencia.length; i++) {
+            for (int j = 0; j < adyacencia.length; j++) {
+                if (dirigido && adyacencia[i][j] > 0) {
+                    conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
+                } 
+                if (adyacencia[i][j] > 0 && i <= j && !dirigido) {
+                    conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
                 }
             }
         }
-
-
-
     }
 
     // ________________________________________ configuracion de grafo _________________________________________________________________________________
@@ -2106,25 +2095,144 @@ public class Grafo {
      * @return el número de colores necesarios para colorear el grafo
      *        -1 si el grafo no es coloreable
      */
-    public int getColoreo(){
+    public int getColoreo() {
         int n = vertices.size();
         int[] colores = new int[n];
         Arrays.fill(colores, -1);
         colores[0] = 0;
-        Queue<Integer> cola = new LinkedList<>();
-        cola.add(0);
-        while (!cola.isEmpty()){
-            int actual = cola.poll();
-            for (int vecino : getVecinos(actual)){
-                if (colores[vecino] == -1){
-                    colores[vecino] = 1 - colores[actual];
-                    cola.add(vecino);
-                } else if (colores[vecino] == colores[actual]){
+
+        boolean[] available = new boolean[n];
+        Arrays.fill(available, true);
+
+        for (int u = 1; u < n; u++) {
+            for (int vecino : getVecinos(u)) {
+                if (colores[vecino] != -1) {
+                    available[colores[vecino]] = false;
+                }
+            }
+
+            int cr;
+            for (cr = 0; cr < n; cr++) {
+                if (available[cr]) break;  
+            }
+
+            colores[u] = cr;
+            Arrays.fill(available, true);
+        }
+
+        return Arrays.stream(colores).max().getAsInt() + 1;
+    }
+
+    
+    /**
+     * Calcula el radio de un grafo.
+     * El radio de un grafo es el mínimo de los máximos de las distancias entre un vértice y todos los demás vértices.
+     * 
+     * @return el radio del grafo
+     */
+    public int radio(){
+        int n = vertices.size();
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++){
+            int max = 0;
+            for (int j = 0; j < n; j++){
+                if (i != j){
+                    ArrayList<Integer> bfsResult = BFS(i, j);
+                    if (bfsResult.isEmpty()) {
+                        return -1;
+                    }
+                    int distancia = bfsResult.size() - 1;
+                    max = Math.max(max, distancia);
+                }
+            }
+            min = Math.min(min, max);
+        }
+        return min;
+    }
+
+    /**
+     * Calcula el diámetro del grafo, que es la mayor distancia entre cualquier par de vértices.
+     * Utiliza el algoritmo de búsqueda en anchura (BFS) para encontrar la distancia más larga.
+     *
+     * @return el diámetro del grafo. Si el grafo no está conectado, retorna -1.
+     */
+    public int diametro(){
+        int n = vertices.size();
+        int max = 0;
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                ArrayList<Integer> bfsResult = BFS(i, j);
+                if (bfsResult.isEmpty()) {
                     return -1;
+                }
+                int distancia = bfsResult.size() - 1;
+                max = Math.max(max, distancia);
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Calcula el diámetro del grafo y devuelve los vértices por donde pasa y la distancia del diámetro.
+     * 
+     * @return un array donde el primer elemento es la lista de vértices por donde pasa el diámetro y el segundo elemento es la distancia del diámetro
+     */
+    public Object[] diametroConVertices() {
+        int n = vertices.size();
+        int maxDistancia = 0;
+        ArrayList<Vertice> caminoMax = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                ArrayList<Vertice> bfsResult = BFS(vertices.get(i), vertices.get(j));
+                if (bfsResult.isEmpty()) {
+                    return new Object[]{new ArrayList<>(), -1};
+                }
+                int distancia = bfsResult.size() - 1;
+                if (distancia > maxDistancia) {
+                    maxDistancia = distancia;
+                    caminoMax = bfsResult;
                 }
             }
         }
-        return Arrays.stream(colores).max().getAsInt();
+        return new Object[]{caminoMax, maxDistancia};
+    }
+
+    private boolean isConectado(int u, int v){
+        return getVecinos(u).contains(v);
+    }
+
+    /**
+     * Calcula el tamaño de la clique máxima en el grafo.
+     *
+     * Una clique es un subconjunto de vértices de un grafo tal que cada par de vértices en el subconjunto
+     * está conectado por una arista. Este método encuentra el tamaño de la clique más grande en el grafo.
+     *
+     * @return el tamaño de la clique máxima en el grafo.
+     */
+    public int clique() {
+        int n = vertices.size();
+        int maxCliqueSize = 0;
+    
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> vecinos = (ArrayList<Integer>) getVecinos(i);
+            int cliqueSize = 1; // Incluir el vértice actual en el tamaño de la clique
+    
+            for (int j = 0; j < vecinos.size(); j++) {
+                boolean isClique = true;
+                for (int k = 0; k < j; k++) {
+                    if (!isConectado(vecinos.get(j), vecinos.get(k))) {
+                        isClique = false;
+                        break;
+                    }
+                }
+                if (isClique) {
+                    cliqueSize++;
+                }
+            }
+            maxCliqueSize = Math.max(maxCliqueSize, cliqueSize);
+        }
+        return maxCliqueSize;
     }
 
     /**

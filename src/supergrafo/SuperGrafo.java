@@ -52,8 +52,13 @@ public class SuperGrafo {
         System.out.println(grafo.gradoMax());
         System.out.println(grafo2.esCompleto());
         System.out.println(grafo2.esConexo());
-        System.out.println(grafo2.esRegular());
+        System.out.println(grafo2.esPlanar());
         System.out.println(grafo.esEuleriano());
         System.out.println(grafo.esHamiltoniano());
+        System.out.println(grafo.getColoreo());
+        System.out.println(grafo.radio());
+        var vertices = grafo.diametroConVertices();
+        System.out.println("Diametro: " + vertices[0] + " - " + vertices[1]);
+        System.out.println(grafo.clique());
     }
 }
