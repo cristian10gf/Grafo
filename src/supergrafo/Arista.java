@@ -38,6 +38,10 @@ public class Arista {
         return this.destino.equals(arista.getDestino()) && this.peso == arista.getPeso();
     }
 
+    public Arista clonar(){
+        return new Arista(this.origen,this.destino,this.peso);
+    }
+
     @Override
     public String toString() {
         return "Arista{" + "peso=" + peso + ",origen= "+origen +" , destino=" + destino + '}';

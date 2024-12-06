@@ -12,79 +12,95 @@ import java.util.HashMap;
 
 public class Grafo {
     public static final long INFI = Integer.MAX_VALUE;
-    private String modalidad; // dirigido, no dirigido, ponderado, dirigido ponderado
     private ArrayList<Vertice> vertices; // lista de vertices del grafo
     private int adyacencia[][]; // matriz de adyacencia del grafo
+    private boolean dirigido; // si el grafo es dirigido
+    private boolean ponderado; // si el grafo es ponderado
     
     /**
-    * Constructor de la clase Grafo.
-    * 
-    * @param modalidad la modalidad del grafo (dirigido, no dirigido, ponderado)
-    * @throws IllegalArgumentException si la modalidad no es válida
-    */ 
-    public Grafo(String modalidad) {
-        if (modalidad.equalsIgnoreCase("Dirigido") || modalidad.equalsIgnoreCase("No dirigido") || modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("Dirigido Ponderado")) {
-            this.modalidad = modalidad;
-        } else {
-            throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
-        }
+     * Constructor de la clase Grafo.
+     *
+     * @param dirigido  un booleano que indica si el grafo es dirigido (true) o no dirigido (false) 
+     * @param ponderado un booleano que indica si el grafo es ponderado (true) o no ponderado (false)
+     */
+    public Grafo(boolean dirigido, boolean ponderado) {
+        this.dirigido = dirigido;
+        this.ponderado = ponderado;
         this.vertices = new ArrayList<>();
+        this.adyacencia = new int[vertices.size()][vertices.size()];
     }
 
     /**
-     * Constructor de la clase Grafo.
-     * 
-     * @param modalidad la modalidad del grafo (dirigido, no dirigido, ponderado)
-     * @param vertices la lista de vértices del grafo
-     * @throws IllegalArgumentException si la modalidad no es válida
+     * Constructor de la clase Grafo
+     *
+     * @param vertices  una lista de vértices del grafo
+     * @param dirigido  true si el grafo es dirigido, false de lo contrario.
+     * @param ponderado true si el grafo es ponderado, false de lo contrario.
      */
-    public Grafo(String modalidad, ArrayList<Vertice> vertices){
-        if (modalidad.equalsIgnoreCase("Dirigido") || modalidad.equalsIgnoreCase("No dirigido") || modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("Dirigido Ponderado")) {
-            this.modalidad = modalidad;
-        } else {
-            throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
-        }
+    public Grafo(ArrayList<Vertice> vertices, boolean dirigido, boolean ponderado){
+        this.dirigido = dirigido;
+        this.ponderado = ponderado;
         this.vertices = vertices;
+        this.adyacencia = new int[vertices.size()][vertices.size()];
     }
 
     /**
-     * Constructor de la clase Grafo.
-     * Inicializa la lista de vértices del grafo y establece la modalidad del grafo como "No dirigido".
-     */
+     * Inicializa la lista de vértices como un ArrayList vacío.
+     * Establece el grafo como no dirigido y no ponderado por defecto.
+    */
     public Grafo() {
         this.vertices = new ArrayList<>();
-        this.modalidad = "No dirigido";
+        this.dirigido = false;
+        this.ponderado = false;
+        this.adyacencia = new int[vertices.size()][vertices.size()];
     }
-
-
-    // ________________________________________ configuracion de grafo _________________________________________________________________________________
     
     /**
-     * Devuelve la modalidad del grafo.
-     *
-     * @return la modalidad del grafo
-     */
-    public void setModalidad(String modalidad) {
-        if (validarModalidad(modalidad) != 0){
-            this.modalidad = modalidad;
-        }else{
-            throw new IllegalArgumentException("Modalidad inválida: " + modalidad);
-        }
+      *
+      * @param dirigido un booleano que indica si el grafo es dirigido (true) o no dirigido (false)
+      */
+    public Grafo(boolean dirigido){
+        this.vertices = new ArrayList<>();
+        this.dirigido = dirigido;
+        this.ponderado = false;
+        this.adyacencia = new int[vertices.size()][vertices.size()];
     }
 
-    private int validarModalidad(String modalidad) {
-        if (modalidad.equalsIgnoreCase("Dirigido")) {
-            return 2;
-        } else if (modalidad.equalsIgnoreCase("No dirigido")) {
-            return 1;
-        } else if (modalidad.equalsIgnoreCase("Ponderado") || modalidad.equalsIgnoreCase("no dirigido Ponderado")) {
-            return 3;
-        } else if (modalidad.equalsIgnoreCase("Dirigido Ponderado") || modalidad.equalsIgnoreCase("Ponderado Dirigido")) {
-            return 4;
-        } else {
-            return 0;
+    public Grafo(int[][] adyacencia, boolean dirigido, boolean ponderado){
+        this.dirigido = dirigido;
+        this.ponderado = ponderado;
+        this.adyacencia = adyacencia;
+        this.vertices = new ArrayList<>();
+
+        for (int i = 0; i < adyacencia.length; i++) {
+            Vertice vertice = new Vertice(String.valueOf(i));
+            this.vertices.add(vertice);
         }
+
+        if (dirigido) {
+            for (int i = 0; i < adyacencia.length; i++) {
+                for (int j = 0; j < adyacencia.length; j++) {
+                    if (adyacencia[i][j] > 0) {
+                        conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < adyacencia.length; i++) {
+                for (int j = 0; j < adyacencia.length; j++) {
+                    if (adyacencia[i][j] > 0 && i <= j) {
+                        System.out.println(adyacencia[i][j] +  ":"+i + ":" + j);
+                        conectarVertice(vertices.get(i), vertices.get(j), adyacencia[i][j]);
+                    }
+                }
+            }
+        }
+
+
+
     }
+
+    // ________________________________________ configuracion de grafo _________________________________________________________________________________
 
     /**
      * Actualiza la matriz de adyacencia del grafo.
@@ -108,16 +124,21 @@ public class Grafo {
      * @param v2 el segundo vértice de la relación
      */
     private void generarRelacacionMatriz(Vertice v1, Vertice v2) {
-        if (validarModalidad(modalidad) == 2) {
-            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
-        } else if (validarModalidad(modalidad)  == 1) {
-            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = 1;
-            adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = 1;
-        } else if (validarModalidad(modalidad)  == 3) {
-            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
-            adyacencia[this.getIndiceVertice(v2)][this.getIndiceVertice(v1)] = v2.getArista(v1).getPeso();
-        } else if (validarModalidad(modalidad)  == 4) {
-            adyacencia[this.getIndiceVertice(v1)][this.getIndiceVertice(v2)] = v1.getArista(v2).getPeso();
+        int indexV1 = this.getIndiceVertice(v1);
+        int indexV2 = this.getIndiceVertice(v2);
+
+        if (adyacencia[indexV1][indexV2] != 0) return;
+
+        if (dirigido && !ponderado) {
+            adyacencia[indexV1][indexV2] = 1;
+        } else if (!dirigido && !ponderado) {
+            adyacencia[indexV1][indexV2] = 1;
+            adyacencia[indexV2][indexV1] = 1;
+        } else if (ponderado && !dirigido) {
+            adyacencia[indexV1][indexV2] = v1.getArista(v2).getPeso();
+            adyacencia[indexV2][indexV1] = v2.getArista(v1).getPeso();
+        } else if (ponderado && dirigido) {
+            adyacencia[indexV1][indexV2] = v1.getArista(v2).getPeso();
         }
     }
 
@@ -142,18 +163,24 @@ public class Grafo {
      */
     public Vertice getVertice(int indice) {
         if (indice < 0 || indice >= vertices.size()) {
-            throw new IllegalArgumentException("El vértice no existe");
+            throw new IllegalArgumentException("El Indice del vértice no existe");
         }
         return vertices.get(indice);
     }
 
     /**
-     * Devuelve la modalidad del grafo.
+     * Devuelve un vértice del grafo según su dato.
      *
-     * @return la modalidad del grafo
+     * @param dato el dato del vértice a buscar
+     * @return el vértice con el dato especificado
      */
-    public String getModalidad() {
-        return modalidad;
+    public Vertice getVertice(String dato) {
+        for (Vertice vertice : vertices) {
+            if (vertice.getDato().equals(dato)) {
+                return vertice;
+            }
+        }
+        return null;
     }
 
     /**
@@ -162,7 +189,7 @@ public class Grafo {
      * @return la matriz de adyacencia del grafo
      */
     public int[][] getAdyacencia() {
-        return adyacencia;
+        return adyacencia.clone();
     }
 
     /**
@@ -184,11 +211,10 @@ public class Grafo {
      * Imprime el grafo mostrando los vértices y las aristas conectadas a cada vértice.
      */
     public void imprimir_grafo() {
-        this.adyacencia = new int[vertices.size()][vertices.size()];
+        uptade();
         for (Vertice vertice : vertices) {
             System.out.print(vertice.getDato() + " -> ");
             for (Arista arista : vertice.getAristas()) {
-                generarRelacacionMatriz(vertice, arista.getDestino());
                 System.out.print(arista.getDestino().getDato() + "(" + arista.getPeso() + ") ");
             }
             System.out.println("");
@@ -199,13 +225,13 @@ public class Grafo {
     /**
      * Muestra la matriz de adyacencia del grafo.
      */
-    public void mostrarMatrizA() {
-        System.out.println("matriz de adyacencia");
-        for (int i = 0; i < vertices.size(); i++) {
-            for (int j = 0; j < vertices.size(); j++) {
-                System.out.print(adyacencia[i][j]);
+    public void imprimirAdyacencia(){
+        uptade();
+        for (int i = 0; i < adyacencia.length; i++) {
+            for (int j = 0; j < adyacencia.length; j++) {
+                System.out.print(adyacencia[i][j] + " ");
             }
-            System.out.println("");
+            System.out.println();
         }
     }
 
@@ -228,6 +254,7 @@ public class Grafo {
      * @return la matriz de recorrido del grafo
      */
     public long[][] matrizRecorrido() {
+        uptade();
         long[][] matriz = new long[adyacencia.length][adyacencia.length];
         for (int i = 0; i < adyacencia.length; i++) {
             for (int j = 0; j < adyacencia.length; j++) {
@@ -280,16 +307,11 @@ public class Grafo {
      * Devuelve una lista de los vértices de mayor grado en el grafo.
      * El grado de un vértice se refiere al número de aristas que tiene el vértice en el grafo.
      *
-     * @return una lista de los vértices de mayot grado en el grafo
+     * @return una lista de los vértices de mayor grado en el grafo
      */
     public ArrayList<Vertice> getVerticesMayorGrado(){
         ArrayList<Vertice> verticesMayorGrado = new ArrayList<>();
-        int max = 0;
-        for (Vertice vertice : vertices) {
-            if (vertice.getAristas().size() > max) {
-                max = vertice.getAristas().size();
-            }
-        }
+        int max = gradoMax();
         for (Vertice vertice : vertices) {
             if (vertice.getAristas().size() == max) {
                 verticesMayorGrado.add(vertice);
@@ -306,12 +328,7 @@ public class Grafo {
      */
     public ArrayList<Vertice> getVerticesMenorGrado(){
         ArrayList<Vertice> verticesMenorGrado = new ArrayList<>();
-        int min = 0;
-        for (Vertice vertice : vertices) {
-            if (vertice.getAristas().size() < min) {
-                min = vertice.getAristas().size();
-            }
-        }
+        int min = gradoMin();
         for (Vertice vertice : vertices) {
             if (vertice.getAristas().size() == min) {
                 verticesMenorGrado.add(vertice);
@@ -374,6 +391,25 @@ public class Grafo {
         return vertices.get(v1).getArista(vertices.get(v2));
     }
 
+    /**
+       *
+
+     * @return true si el grafo es dirigido, false de lo contrario.
+
+      */
+    public boolean esDirigido(){
+        return dirigido;
+    }
+
+    /**
+     * Verifica si el grafo es ponderado.
+     *
+     * @return true si el grafo es ponderado, false en caso contrario.
+     */
+    public boolean esPonderado(){
+        return ponderado;
+    }
+
     // _________________________________________metodos de grafo _________________________________________________________________________________________________________________________
 
     /**
@@ -385,7 +421,7 @@ public class Grafo {
     public void addVertice(Vertice vertice) {
         boolean mismoDato = false;
         for (Vertice v : vertices){
-            if (v.getDato().equals(vertice.getDato())){
+            if (v == vertice){
                 mismoDato = true;
                 break;
             }
@@ -393,21 +429,14 @@ public class Grafo {
 
         if (this.vertices.contains(vertice)) {
             throw new IllegalArgumentException("El vértice ya existe");
-        } else if ((validarModalidad(modalidad) == 3 || validarModalidad(modalidad) == 4) && vertice.conPeso() == false){
-            throw new IllegalArgumentException("El grafo es ponderado y el vertice no tiene peso");
-        } else if ((validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 1) && vertice.conPeso() == true){
-            throw new IllegalArgumentException("El grafo no es ponderado y el vertice tiene peso");
-        } else if ( (validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 2) && vertice.getEstado().equalsIgnoreCase("ponderado")){
+        } else if (!ponderado && vertice.getEstado().equalsIgnoreCase("ponderado")){
             throw new IllegalArgumentException("El grafo no debe ser ponderado y el vertice tiene  aristas con peso diferente de 1");
-        } else if ( (validarModalidad(modalidad) == 4 || validarModalidad(modalidad) == 3) && vertice.getEstado().equalsIgnoreCase("no ponderado")){
-            throw new IllegalArgumentException("El grafo debe ser ponderado y el vertice tiene  aristas con peso igual a 1");
-        } else if (vertice.getAristas().size() == 0){
-            this.vertices.add(vertice);
         } else if (mismoDato){
-            //throw new IllegalArgumentException("El vértice ya existe");
-        } else {
-            this.vertices.add(vertice);
-        }
+            throw new IllegalArgumentException("El vértice ya existe");
+        } 
+            
+        this.vertices.add(vertice);
+        this.adyacencia = new int[vertices.size()][vertices.size()];
     }
 
     /**
@@ -432,72 +461,60 @@ public class Grafo {
     public void addVertice(String dato) {
         for (Vertice vertice : vertices) {
             if (vertice.getDato().equals(dato)) {
-                //throw new IllegalArgumentException("El vértice ya existe");
+                throw new IllegalArgumentException("El vértice ya existe");
             }
         }
         Vertice vertice = new Vertice(dato);
         this.vertices.add(vertice);
+
+        uptade();
     }
 
 
 
     /**
-     * Conecta dos vértices en el grafo con un peso dado, según la modalidad establecida.
-     * Si la modalidad es 2, se conecta el vértice v1 con el vértice v2.
-     * Si la modalidad es 1, se conecta el vértice v1 con el vértice v2 y viceversa.
-     * Si la modalidad es 3, se conecta el vértice v1 con el vértice v2 y viceversa, con el peso especificado.
-     * Si la modalidad es 4, se conecta el vértice v1 con el vértice v2, con el peso especificado.
-     * Si alguno de los vértices no está presente en el grafo, se añade al grafo.
-     * Finalmente, se actualiza el grafo.
-     *
+     * El método maneja cuatro casos:
+        * 1. Grafo dirigido y no ponderado: Conecta v1 a v2.
+        * 2. Grafo no dirigido y no ponderado: Conecta v1 a v2 y v2 a v1.
+        * 3. Grafo no dirigido y ponderado: Conecta v1 a v2 y v2 a v1 con el peso especificado.
+        * 4. Grafo dirigido y ponderado: Conecta v1 a v2 con el peso especificado.
      * @param v1 El primer vértice a conectar.
      * @param v2 El segundo vértice a conectar.
-     * @param peso El peso de la conexión.
+     * @param peso El peso de la arista que conecta los vértices. Este parámetro se usa solo si el grafo es ponderado.
      */
     public void conectarVertice(Vertice v1, Vertice v2, int peso) {
-        if (validarModalidad(modalidad) == 2) {
+        if (v1.getArista(v2) != null || (v2.getArista(v1) != null && !dirigido) ) {
+            System.out.println("La arista ya existe");
+            return;
+        }
+        
+        if (dirigido && !ponderado) {
             v1.unirVertices(v2);
-        } else if (validarModalidad(modalidad)  == 1) {
+        } else if (!dirigido && !ponderado) {
             v1.unirVertices(v2);
             v2.unirVertices(v1);
-        } else if (validarModalidad(modalidad)  == 3) {
+        } else if (ponderado && !dirigido) {
             v1.unirVertices(v2, peso);
             v2.unirVertices(v1, peso);
-        } else if (validarModalidad(modalidad)  == 4) {
+        } else if (ponderado && dirigido) {
             v1.unirVertices(v2, peso);
         }
-        if (!this.vertices.contains(v1)) {
-            this.vertices.add(v1);
-        } 
-        if (!this.vertices.contains(v2)) {
-            this.vertices.add(v2);
-        }
+
+        if (!this.vertices.contains(v1)) this.vertices.add(v1);
+        
+        if (!this.vertices.contains(v2)) this.vertices.add(v2);
+        
         uptade();
     }
 
     /**
-     * Conecta dos vértices en el grafo, dependiendo de la modalidad del grafo.
-     * Si la modalidad es 2, se conecta el vértice v1 con el vértice v2.
-     * Si la modalidad es 1, se conecta el vértice v1 con el vértice v2 y viceversa.
-     * Si alguno de los vértices no está presente en el grafo, se añade al grafo.
+     * Conecta dos vértices en el grafo.
      * 
      * @param v1 el primer vértice a conectar
      * @param v2 el segundo vértice a conectar
      */
     public void conectarVertice(Vertice v1, Vertice v2) {
-        if (validarModalidad(modalidad) == 2 || validarModalidad(modalidad) == 4){
-            v1.unirVertices(v2);
-        } else if (validarModalidad(modalidad)  == 1 || validarModalidad(modalidad) == 3){
-            v1.unirVertices(v2);
-            v2.unirVertices(v1);
-        } 
-        if (!this.vertices.contains(v1)) {
-            this.vertices.add(v1);
-        } 
-        if (!this.vertices.contains(v2)) {
-            this.vertices.add(v2);
-        }
-        uptade();
+        conectarVertice(v1, v2, 1);
     }
 
 
@@ -509,14 +526,11 @@ public class Grafo {
      * @throws IllegalArgumentException si el vértice no existe en el grafo
      */
     public void eliminarVertice(Vertice vertice) {
-        if (this.vertices.contains(vertice)) {
-            this.vertices.remove(vertice);
-            for (Vertice v : vertices) {
-                v.getAristas().remove(vertice.getArista(v));
-            }
-        } else {
-            throw new IllegalArgumentException("El vértice no existe");
-        }
+        if (!this.vertices.contains(vertice)) throw new IllegalArgumentException("El vértice no existe");
+        
+        this.vertices.remove(vertice);
+        for (Vertice v : vertices) v.eliminarArista(vertice.getArista(v));
+       
         uptade();
     }
 
@@ -527,14 +541,8 @@ public class Grafo {
      */
     public void eliminarVertice(ArrayList<Vertice> vertices) {
         for (Vertice vertice : vertices) {
-            if (this.vertices.contains(vertice)) {
-                this.vertices.remove(vertice);
-                for (Vertice v : vertices) {
-                    v.getAristas().remove(vertice.getArista(v));
-                }
-            }
+            eliminarVertice(vertice);
         }
-        uptade();
     }
 
     /**
@@ -544,15 +552,12 @@ public class Grafo {
      * funcion aun experimental puede dar comportamientos no esperados
      */
     public void eliminarVertice(String dato) {
-        for (Vertice vertice : vertices) {
-            if (vertice.getDato().equals(dato)) {
-                this.vertices.remove(vertice);
-                for (Vertice v : vertices) {
-                    v.getAristas().remove(vertice.getArista(v));
-                }
-            }
+        Vertice vertice = getVertice(dato);
+        if (vertice == null) {
+            throw new IllegalArgumentException("El vértice no existe");
         }
-        uptade();
+
+        eliminarVertice(vertice);
     }
 
 
@@ -565,25 +570,24 @@ public class Grafo {
      * @throws IllegalArgumentException si la arista no existe en el grafo
      */
     public void eliminarArista(Vertice v1, Vertice v2) {
-        if (this.vertices.contains(v1) && this.vertices.contains(v2)) {
-            v1.getAristas().remove(v1.getArista(v2));
-            if (validarModalidad(modalidad) == 1 || validarModalidad(modalidad) == 3) {
-                v2.getAristas().remove(v2.getArista(v1));
-            }
-        } else {
+        if (!this.vertices.contains(v1) || !this.vertices.contains(v2)) {
             throw new IllegalArgumentException("La arista no existe");
         }
+
+        v1.eliminarArista(v1.getArista(v2));
+        if (!dirigido) v2.eliminarArista(v2.getArista(v1));
+    
         uptade();
     }
 
+    /**
+     * Elimina una arista del grafo.
+     *
+     * @param arista la arista a eliminar
+     * @throws IllegalArgumentException si la arista no existe en el grafo
+     */
     public void eliminarArista(Arista arista) {
-        for (Vertice v : vertices){
-            if (v.getAristas().contains(arista)){
-                v.eliminarArista(arista);
-                break;
-            }
-        }
-        uptade();
+        eliminarArista(arista.getOrigen(), arista.getDestino());
     }
 
 
@@ -597,6 +601,7 @@ public class Grafo {
      * @return una lista de enteros que representa la ruta desde el vértice de inicio hasta el vértice de destino
      */
     public ArrayList<Integer> BFS(int inicio, int fin) {
+        uptade();
         ArrayList<Integer> ruta = new ArrayList<>();
         Queue<Integer> cola = new LinkedList<>();
         boolean[] visitados = new boolean[vertices.size()];
@@ -643,6 +648,7 @@ public class Grafo {
      * @return una lista de vértices que representa la ruta desde el vértice de inicio hasta el vértice de destino
      */
     public ArrayList<Vertice> BFS(Vertice inicio, Vertice fin) {
+        uptade();
         int inicioIndice = getIndiceVertice(inicio);
         int finIndice = getIndiceVertice(fin);
 
@@ -693,6 +699,7 @@ public class Grafo {
      * @return una lista con los vértices visitados en el orden en que fueron encontrados
      */
     public ArrayList<Integer> DFS(int inicio) {
+        uptade();
         boolean[] visitados = new boolean[vertices.size()];
         ArrayList<Integer> ruta = new ArrayList<>();
         Stack<Integer> pila = new Stack<>();
@@ -724,6 +731,7 @@ public class Grafo {
      * @return una lista de vértices visitados en el orden en que fueron encontrados
      */
     public ArrayList<Vertice> DFS(Vertice inicio) {
+        uptade();
         int inicioIndice = getIndiceVertice(inicio);
         boolean[] visitados = new boolean[vertices.size()];
         ArrayList<Vertice> ruta = new ArrayList<>();
@@ -921,6 +929,7 @@ public class Grafo {
      * @return una lista de vértices que representa el camino más corto desde el vértice de inicio hasta el vértice de destino, o una lista vacía si no hay camino
      */
     public List<Vertice> dijkstra(Vertice inicio, Vertice fin) {
+        uptade();
         int n = vertices.size();
         int[] distancias = new int[n];
         int[] predecesores = new int[n];
@@ -983,6 +992,7 @@ public class Grafo {
      *         o una lista vacía si no hay camino
      */
     public List<Integer> dijkstra(int inicio, int fin) {
+        uptade();
         int n = vertices.size();
         int[] distancias = new int[n];
         int[] predecesores = new int[n];
@@ -1109,6 +1119,7 @@ public class Grafo {
      *         o null si hay ciclos negativos en el grafo
      */
     public int[] bellmanFord(int source) {
+        uptade();
         int n = adyacencia.length; // Obtener el número de nodos en el grafo
 
         // Inicializamos un arreglo de distancias con infinito y un arreglo de visitados a false
@@ -1174,20 +1185,19 @@ public class Grafo {
      */
     public Grafo kruscal(){
         Kruskal graph = new Kruskal(this.vertices.size());
-        for(Vertice vertice:vertices){
-            for (Arista arista:vertice.getAristas()){
-                graph.addEdge(getIndiceVertice(vertice), getIndiceVertice(arista.getDestino()), arista.getPeso());
-            }
+        for (Arista arista:getAristas()){
+            graph.addEdge(getIndiceVertice(arista.getOrigen()), getIndiceVertice(arista.getDestino()), arista.getPeso());
         }
-        Grafo newGrafo = new Grafo(modalidad);
+        
+        Grafo newGrafo = new Grafo(dirigido, ponderado);
         ArrayList<int[]> verticesPos= graph.kruskalMST();
-        HashMap<Integer, Vertice> newVertices = new HashMap<>();
-        for (int[] vertice:verticesPos){
-            Vertice newVerticeOrigen = new Vertice(vertices.get(vertice[0]).getDato(), vertices.get(vertice[0]).getID());
-            Vertice newVerticeDestino = new Vertice(vertices.get(vertice[1]).getDato(), vertices.get(vertice[1]).getID());
-            newVertices.put(vertice[0], newVerticeOrigen);
-            newVertices.put(vertice[1], newVerticeDestino);
+
+        ArrayList<Vertice> newVertices = new ArrayList<>();
+        for (int i = 0; i < vertices.size(); i++){
+            Vertice newVertice = new Vertice(vertices.get(i).getDato());
+            newVertices.add(newVertice);
         }
+        
         for (int[] vertice:verticesPos){
             newGrafo.conectarVertice(newVertices.get(vertice[0]), newVertices.get(vertice[1]), vertice[2]);
         }
@@ -1199,16 +1209,17 @@ public class Grafo {
      * 
      * @param n el número de vértices en el grafo
      * @param adyacencia la matriz de adyacencia del grafo
-     * @param modalidad la modalidad del grafo
+     * @param ponderado si el grafo es ponderado
+     * @param dirigido si el grafo es dirigido
      * @return Un nuevo grafo que representa el árbol de expansión mínima.
      * @throws IllegalArgumentException si el número de vértices en la matriz de adyacencia no coincide con el número de vértices en el grafo
      * @throws IllegalArgumentException si la matriz de adyacencia no es cuadrada
      * @throws IllegalArgumentException si la modalidad no es válida
      * 
      */
-    public static Grafo Kruskal(int n, int[][] adyacencia, String modalidad){
+    public static Grafo Kruskal(int n, int[][] adyacencia, boolean ponderado, boolean dirigido){
         Kruskal graph = new Kruskal(n);
-        Grafo newGrafo = new Grafo(modalidad);
+        Grafo newGrafo = new Grafo(dirigido, ponderado);
 
         if (adyacencia.length != n) {
             throw new IllegalArgumentException("El número de vértices en la matriz de adyacencia no coincide con el número de vértices en el grafo");
@@ -1218,10 +1229,6 @@ public class Grafo {
             throw new IllegalArgumentException("La matriz de adyacencia no es cuadrada");
         }
 
-        if (modalidad != "Dirigido" && modalidad != "No dirigido" && modalidad != "Ponderado" && modalidad != "No ponderado" ){
-            throw new IllegalArgumentException("La modalidad no es válida");
-        }
-
         for (int i = 0; i < n; i++){
             for (int j = 0; j < n; j++){
                 if (adyacencia[i][j] != 0){
@@ -1229,6 +1236,7 @@ public class Grafo {
                 }
             }
         }
+
         ArrayList<int[]> verticesPos= graph.kruskalMST();
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
         for (int[] vertice:verticesPos){
@@ -1250,14 +1258,14 @@ public class Grafo {
      */
     public Grafo PRIM(){
         ArrayList<int[]> resultado = PRIM_methoth(adyacencia, this.vertices.size());
-        HashMap<Integer, Vertice> newVertices = new HashMap<>();
-        Grafo newGrafo = new Grafo(modalidad);
-        for (int[] vertice:resultado){
-            Vertice newVerticeOrigen = new Vertice(vertices.get(vertice[0]).getDato(), vertices.get(vertice[0]).getID());
-            Vertice newVerticeDestino = new Vertice(vertices.get(vertice[1]).getDato(), vertices.get(vertice[1]).getID());
-            newVertices.put(vertice[0], newVerticeOrigen);
-            newVertices.put(vertice[1], newVerticeDestino);
+        Grafo newGrafo = new Grafo(dirigido, ponderado);
+
+        ArrayList<Vertice> newVertices = new ArrayList<>();
+        for (int i = 0; i < vertices.size(); i++){
+            Vertice newVertice = vertices.get(i);
+            newVertices.add(new Vertice(newVertice.getDato()));
         }
+        
         for (int[] vertice:resultado){
             newGrafo.conectarVertice(newVertices.get(vertice[0]), newVertices.get(vertice[1]), vertice[2]);
         }
@@ -1269,13 +1277,14 @@ public class Grafo {
      * 
      * @param n el número de vértices en el grafo
      * @param adyacencia la matriz de adyacencia del grafo
-     * @param modalidad la modalidad del grafo
+     * @param ponderado si el grafo es ponderado
+     * @param dirigido si el grafo es dirigido
      * @return Un nuevo grafo que representa el árbol de expansión mínima.
      * @throws IllegalArgumentException si el número de vértices en la matriz de adyacencia no coincide con el número de vértices en el grafo
      * @throws IllegalArgumentException si la matriz de adyacencia no es cuadrada
      * @throws IllegalArgumentException si la modalidad no es válida
      */
-    public static Grafo PRIM(int n, int[][] adyacencia, String modalidad){
+    public static Grafo PRIM(int n, int[][] adyacencia, boolean ponderado, boolean dirigido){
         if (adyacencia.length != n) {
             throw new IllegalArgumentException("El número de vértices en la matriz de adyacencia no coincide con el número de vértices en el grafo");
         }
@@ -1284,13 +1293,9 @@ public class Grafo {
             throw new IllegalArgumentException("La matriz de adyacencia no es cuadrada");
         }
 
-        if (modalidad != "Dirigido" && modalidad != "No dirigido" && modalidad != "Ponderado" && modalidad != "No ponderado" ){
-            throw new IllegalArgumentException("La modalidad no es válida");
-        }
-
         ArrayList<int[]> resultado = PRIM_methoth(adyacencia, n);
         HashMap<Integer, Vertice> newVertices = new HashMap<>();
-        Grafo newGrafo = new Grafo(modalidad);
+        Grafo newGrafo = new Grafo(dirigido, ponderado);
         for (int[] vertice:resultado){
             Vertice newVerticeOrigen = new Vertice(Integer.toString(vertice[0]), vertice[0]);
             Vertice newVerticeDestino = new Vertice(Integer.toString(vertice[0]), vertice[1]);
@@ -1361,6 +1366,10 @@ public class Grafo {
 
     // _________________________________________ GRAFOS Especificos _________________________________________________________________________________________________________________________
 
+    private static Grafo getGrafoPonderado() {
+        return new Grafo(false, true);
+    }
+
     /**
      * metodo que retorna un grafo Trivial no dirigido y no ponderado
      * @return Grafo
@@ -1372,17 +1381,6 @@ public class Grafo {
         return grafo;
     }
 
-    /**
-     * metodo que retorna un grafo Trivial con modalidad
-     * @param modalidad
-     * @return Grafo
-     */
-    public static Grafo grafoTrivial(String modalidad){
-        Grafo grafo = new Grafo(modalidad);
-        Vertice vertice = new Vertice("0");
-        grafo.addVertice(vertice);
-        return grafo;
-    }
 
     /**
      * metodo que retorna un grafo Nulo no dirigido y no ponderado
@@ -1412,11 +1410,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo completo con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoCompleto(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoCompleto(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1455,7 +1453,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoCompletoPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1472,11 +1470,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo lineal con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoLineal(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoLineal(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1511,7 +1509,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoLinealPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1525,11 +1523,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo ciclo con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoCiclo(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoCiclo(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1566,7 +1564,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoCicloPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1581,11 +1579,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo rueda con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoRueda(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoRueda(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1629,7 +1627,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoRuedaPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = new Grafo(false, true);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1647,11 +1645,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo estrella con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoEstrella(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoEstrella(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1687,7 +1685,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoEstrellaPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1701,11 +1699,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo Bipartito completo con n vertices y no ponderado
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoBipartitoCompleto(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoBipartitoCompleto(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice("A"+Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1753,7 +1751,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoBipartitoCompletoPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice("A"+Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1773,11 +1771,11 @@ public class Grafo {
     /**
      * metodo que retorna un grafo Bipartito con n vertices
      * @param nVertices
-     * @param modalidad
+     * @param dirigido
      * @return Grafo
      */
-    public static Grafo grafoBipartito(int nVertices, String modalidad){
-        Grafo grafo = new Grafo(modalidad);
+    public static Grafo grafoBipartito(int nVertices, boolean dirigido){
+        Grafo grafo = new Grafo(dirigido);
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice("A"+Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1821,7 +1819,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoBipartitoPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice("A"+Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1839,6 +1837,69 @@ public class Grafo {
    
     
     
+        // _________________________________________ flujo maximo _________________________________________________________________________________________________________________________
+        
+        /**
+         * Calcula el flujo máximo utilizando el algoritmo de Ford-Fulkerson en un grafo dado.
+         * 
+         * @param graph el grafo representado como una matriz de adyacencia
+         * @param source el nodo fuente del grafo
+         * @param fin el nodo final del grafo
+         * @return el flujo máximo en el grafo
+         */
+        public static int fordFulkerson(int graph[][], int source, int fin) {
+            // source: inicio, fin: final
+            int maxFlow = 0;
+            int parent[] = new int[graph.length];
+    
+            // Encuentra un camino aumentante en el grafo residual y actualiza el flujo máximo
+            while (Grafo.bfs(graph, source, fin, parent)) {
+                int pathFlow = Integer.MAX_VALUE;
+                int s = fin;
+    
+                // Encuentra el flujo mínimo en el camino encontrado por BFS
+                while (s != source) {
+                    int u = parent[s];
+                    pathFlow = Math.min(pathFlow, graph[u][s]);
+                    s = u;
+                }
+    
+                // Actualiza las capacidades residuales del camino y el flujo máximo
+                int v = fin;
+                while (v != source) {
+                    int u = parent[v];
+                    graph[u][v] -= pathFlow;
+                    graph[v][u] += pathFlow;
+                    v = u;
+                }
+    
+                maxFlow += pathFlow;
+            }
+    
+            return maxFlow;
+        }
+    
+        private static boolean bfs(int graph[][], int source, int fin, int parent[]) {
+            boolean visited[] = new boolean[graph.length];
+            LinkedList<Integer> queue = new LinkedList<>();
+            queue.add(source);
+            visited[source] = true;
+            parent[source] = -1;
+    
+            while (!queue.isEmpty()) {
+                int u = queue.poll();
+                for (int v = 0; v < graph.length; v++) {
+                    if (!visited[v] && graph[u][v] > 0) {
+                        queue.add(v);
+                        parent[v] = u;
+                        visited[v] = true;
+                    }
+                }
+            }
+    
+            return visited[fin];
+        }
+        
     
     // _________________________________________ COSAS NO PROBADAS __________________________________________________________________________________________________________________
 
@@ -1871,7 +1932,7 @@ public class Grafo {
      * @return Grafo
      */
     public static Grafo grafoPlanoPonderado(int nVertices){
-        Grafo grafo = new Grafo("Ponderado");
+        Grafo grafo = getGrafoPonderado();
         for (int i = 0; i < nVertices; i++){
             Vertice vertice = new Vertice(Integer.toString(i));
             grafo.addVertice(vertice);
@@ -1886,70 +1947,6 @@ public class Grafo {
         return grafo;
     }
 
-
-    // _________________________________________ flujo maximo _________________________________________________________________________________________________________________________
-    
-    /**
-     * Calcula el flujo máximo utilizando el algoritmo de Ford-Fulkerson en un grafo dado.
-     * 
-     * @param graph el grafo representado como una matriz de adyacencia
-     * @param source el nodo fuente del grafo
-     * @param fin el nodo final del grafo
-     * @return el flujo máximo en el grafo
-     */
-    public static int fordFulkerson(int graph[][], int source, int fin) {
-        // source: inicio, fin: final
-        int maxFlow = 0;
-        int parent[] = new int[graph.length];
-
-        // Encuentra un camino aumentante en el grafo residual y actualiza el flujo máximo
-        while (Grafo.bfs(graph, source, fin, parent)) {
-            int pathFlow = Integer.MAX_VALUE;
-            int s = fin;
-
-            // Encuentra el flujo mínimo en el camino encontrado por BFS
-            while (s != source) {
-                int u = parent[s];
-                pathFlow = Math.min(pathFlow, graph[u][s]);
-                s = u;
-            }
-
-            // Actualiza las capacidades residuales del camino y el flujo máximo
-            int v = fin;
-            while (v != source) {
-                int u = parent[v];
-                graph[u][v] -= pathFlow;
-                graph[v][u] += pathFlow;
-                v = u;
-            }
-
-            maxFlow += pathFlow;
-        }
-
-        return maxFlow;
-    }
-
-    private static boolean bfs(int graph[][], int source, int fin, int parent[]) {
-        boolean visited[] = new boolean[graph.length];
-        LinkedList<Integer> queue = new LinkedList<>();
-        queue.add(source);
-        visited[source] = true;
-        parent[source] = -1;
-
-        while (!queue.isEmpty()) {
-            int u = queue.poll();
-            for (int v = 0; v < graph.length; v++) {
-                if (!visited[v] && graph[u][v] > 0) {
-                    queue.add(v);
-                    parent[v] = u;
-                    visited[v] = true;
-                }
-            }
-        }
-
-        return visited[fin];
-    }
-    
 
     // _________________________________________ estados del Grafo _________________________________________________________________________________________________________________________
 
@@ -1995,7 +1992,8 @@ public class Grafo {
      */
     public boolean esCompleto(){
         int n = vertices.size();
-        return getAristas().size() == n*(n-1)/2;
+        int m = getAristas().size();
+        return !dirigido ? m == n*(n-1) : m == n*(n-1)/2;
     }
 
     /**
@@ -2139,13 +2137,14 @@ public class Grafo {
         if (this == o) return true;
         if (!(o instanceof Grafo)) return false;
         Grafo grafo = (Grafo) o;
-        return modalidad == grafo.modalidad && vertices.equals(grafo.vertices);
+        return dirigido == grafo.dirigido && vertices.equals(grafo.vertices) && ponderado == grafo.ponderado;
     }
 
     @Override
     public String toString() {
         return "Grafo{" +
-                "modalidad=" + modalidad +
+                "dirigido=" + dirigido +
+                ", ponderado=" + ponderado +
                 ", vertices=" + vertices +
                 '}';
     }

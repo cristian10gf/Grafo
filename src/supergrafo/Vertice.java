@@ -153,10 +153,7 @@ public class Vertice {
     }
 
     public boolean equals(Vertice v) {
-        if (v.getDato() == this.dato && v.getID() == this.ID) {
-            return true;
-        }
-        return false;
+        return v.getDato() == this.dato || v.getID() == this.ID;
     }
     
 
@@ -194,14 +191,21 @@ public class Vertice {
                 break;
             }
         }
-        if (estado == 0){
-            return "no ponderado";
-        } else {
-            return "ponderado";
-        }
+        return estado == 0 ? "no ponderado" : "ponderado";
     }
 
     public void eliminarArista(Arista arista){
         this.aristas.remove(arista);
+    }
+
+    public Vertice clonar(boolean cloneAristas){
+        if (cloneAristas){
+            ArrayList<Arista> aristas = new ArrayList<>();
+            for (Arista arista: this.aristas){
+                aristas.add(arista.clonar());
+            }
+            return new Vertice(this.dato, aristas);
+        }
+        return new Vertice(this.dato);
     }
 }
